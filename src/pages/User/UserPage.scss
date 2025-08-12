@@ -1,0 +1,396 @@
+/* UserPage.scss */
+
+$bg-color: #2c2c2c;
+$card-bg: #383838;
+$text-color: #e0e0e0;
+$border-color: #4a4a4a;
+$primary-color: #5d9cec;
+$primary-hover: #4a7bbd;
+$green-color: #27ae60;
+$green-hover: #219d55;
+$red-color: #e74c3c;
+$red-hover: #c0392b;
+
+.user-page {
+  background-color: $bg-color;
+  color: $text-color;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  padding: 30px;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 30px;
+
+  .filter-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .dropdown-checkbox {
+      position: relative;
+
+      .dropdown-toggle {
+        background-color: $card-bg;
+        border: 1px solid $border-color;
+        color: $text-color;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .arrow {
+          font-size: 0.8rem;
+          color: $primary-color;
+        }
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 10;
+        background-color: $card-bg;
+        border: 1px solid $border-color;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        max-height: 200px;
+        overflow-y: auto;
+        min-width: 150px;
+        display: flex;
+        flex-direction: column;
+
+        .checkbox-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: lighten($card-bg, 5%);
+          }
+
+          span {
+            user-select: none;
+          }
+        }
+      }
+    }
+
+    .date-input-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      .date-input,
+      .number-input {
+        background-color: $card-bg;
+        border: 1px solid $border-color;
+        color: $text-color;
+        padding: 10px;
+        border-radius: 5px;
+        width: 100px;
+
+        &::placeholder {
+          color: #888;
+        }
+      }
+    }
+  }
+
+  .search-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .search-input {
+      background-color: $card-bg;
+      border: 1px solid $border-color;
+      color: $text-color;
+      padding: 10px 15px;
+      border-radius: 5px;
+      width: 250px;
+    }
+
+    .search-button,
+    .save-button {
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: $primary-hover;
+      }
+    }
+
+    .save-button {
+      background-color: $green-color;
+
+      &:hover {
+        background-color: $green-hover;
+      }
+    }
+  }
+}
+
+.content-area {
+  .table-wrapper {
+    background-color: $card-bg;
+    border: 1px solid $border-color;
+    border-radius: 10px;
+    overflow: hidden;
+
+    .table-title {
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $text-color;
+      border-bottom: 1px solid $border-color;
+      margin: 0;
+    }
+
+    .table-content {
+      display: flex;
+      flex-direction: column;
+      max-height: 70vh;
+      overflow-y: auto;
+
+      .table-header,
+      .table-row {
+        display: grid;
+        grid-template-columns: 0.5fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr 0.5fr;
+        padding: 10px 15px;
+        border-bottom: 1px solid $border-color;
+      }
+
+      .table-header {
+        background-color: darken($card-bg, 5%);
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+
+      .table-row {
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background-color: lighten($card-bg, 5%);
+        }
+
+        span {
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .view-button {
+          background-color: $primary-color;
+          color: white;
+          border: none;
+          padding: 5px 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 0.8rem;
+
+          &:hover {
+            background-color: $primary-hover;
+          }
+        }
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+
+  .modal-content {
+    background-color: $card-bg;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    color: $text-color;
+  }
+
+  .project-modal-content {
+    @extend .modal-content;
+    max-width: 800px;
+  }
+
+  .group-modal-content {
+    @extend .modal-content;
+    max-width: 1000px;
+    max-height: 95vh; /* 높이 제한 */
+    overflow-y: auto; /* 스크롤 가능 */
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0;
+      color: $text-color;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: $text-color;
+    }
+  }
+
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .modal-section {
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      overflow: hidden;
+
+      h4 {
+        background-color: darken($card-bg, 5%);
+        padding: 10px 15px;
+        margin: 0;
+        font-size: 1rem;
+        font-weight: bold;
+        color: $text-color;
+      }
+      .modal-table-content {
+        max-height: 250px;
+        overflow-y: auto;
+
+        .modal-table-header {
+          display: grid;
+          background-color: darken($card-bg, 10%);
+          font-weight: bold;
+          padding: 10px 15px;
+          border-bottom: 1px solid $border-color;
+          font-size: 0.9rem;
+          position: sticky;
+          top: 0;
+
+          &.project-header {
+            grid-template-columns: 0.5fr 2fr 1fr 1fr;
+          }
+
+          &.group-header {
+            grid-template-columns: 0.5fr 2fr 1.5fr 1.5fr 1fr 1.2fr;
+          }
+        }
+
+        .modal-table-row {
+          display: grid;
+          padding: 10px 15px;
+          border-bottom: 1px solid $border-color;
+          font-size: 0.85rem;
+
+          &.project-row {
+            grid-template-columns: 0.5fr 2fr 1fr 1fr;
+          }
+
+          &.group-row {
+            grid-template-columns: 0.5fr 2fr 1.5fr 1.5fr 1fr 1.2fr;
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+      
+      .group-modal-table-content{
+        max-height: 65vh;
+        overflow-y: auto;
+
+        .modal-table-header {
+          display: grid;
+          background-color: darken($card-bg, 10%);
+          font-weight: bold;
+          padding: 10px 15px;
+          border-bottom: 1px solid $border-color;
+          font-size: 0.9rem;
+          position: sticky;
+          top: 0;
+
+          &.project-header {
+            grid-template-columns: 0.5fr 2fr 1fr 1fr;
+          }
+
+          &.group-header {
+            grid-template-columns: 0.5fr 2fr 1.5fr 1.5fr 1fr 1.2fr;
+          }
+        }
+
+        .modal-table-row {
+          display: grid;
+          padding: 10px 15px;
+          border-bottom: 1px solid $border-color;
+          font-size: 0.85rem;
+
+          &.project-row {
+            grid-template-columns: 0.5fr 2fr 1fr 1fr;
+          }
+
+          &.group-row {
+            grid-template-columns: 0.5fr 2fr 1.5fr 1.5fr 1fr 1.2fr;
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1200px) {
+  .content-area .table-wrapper .table-content {
+    overflow-x: auto;
+  }
+
+  .content-area .table-wrapper .table-content .table-header,
+  .content-area .table-wrapper .table-content .table-row {
+    grid-template-columns: repeat(9, minmax(100px, 1fr));
+  }
+}

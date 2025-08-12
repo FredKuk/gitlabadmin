@@ -1,0 +1,80 @@
+// src/components/Modal.scss
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%; // 가로 길이를 90%로 확장
+  max-width: 1900px; // 최대 너비 설정으로 너무 커지지 않게 조정
+  height: 80vh; // 높이도 확장
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #555;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.modal-body {
+  flex: 1; /* modal-body가 남은 세로 공간을 모두 차지하도록 함 */
+  display: flex;
+  flex-direction: column; /* 라디오 버튼과 테이블 컨테이너를 세로로 정렬 */
+  overflow: hidden; /* 모달 전체 스크롤 방지 */
+}
+
+.modal-radio-buttons {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+  padding-left: 5px;
+}
+
+.modal-tables-container {
+  flex: 1; /* 테이블 컨테이너가 남은 세로 공간을 채우도록 함 */
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* 가로 스크롤 허용 */
+  padding-bottom: 10px;
+}
+
+.modal-table-section {
+  flex: 1 0 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-table-section .scroll-area {
+  flex: 1;
+  overflow-y: auto;
+}

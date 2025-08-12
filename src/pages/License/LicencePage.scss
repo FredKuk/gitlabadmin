@@ -1,0 +1,245 @@
+/* src/pages/LicencePage.scss */
+
+// 컬러 팔레트와 폰트
+$primary-color: #5d9cec;
+$secondary-color: #384252;
+$text-color: #e0e0e0;
+$border-color: #4a4a4a;
+$background-color: #2c2c2c;
+$card-bg-color: #383838;
+
+.license-page {
+  padding: 30px;
+  background-color: $background-color;
+  color: $text-color;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h2 {
+  margin-top: 0;
+  padding-bottom: 15px;
+  border-bottom: 2px solid $primary-color;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.license-info-top,
+.license-section {
+  display: flex;
+  flex-direction: column;
+  background-color: $card-bg-color;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  height: fit-content;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $border-color;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  .info-label {
+    font-weight: 600;
+    width: 120px;
+    padding: 15px;
+    background-color: $secondary-color;
+    border-right: 1px solid $border-color;
+  }
+
+  .info-value, .info-value-wide {
+    padding: 15px;
+    word-break: break-all;
+  }
+
+  .info-value {
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid $border-color;
+  }
+  
+  .info-value-wide {
+    flex: 2;
+  }
+  
+  .license-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+
+    button {
+      background-color: #444;
+      color: $text-color;
+      border: 1px solid #666;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s, border-color 0.2s;
+
+      &:hover {
+        background-color: $primary-color;
+        border-color: $primary-color;
+      }
+    }
+  }
+}
+
+.license-sections-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; 
+  align-items: flex-start;
+}
+
+.license-section {
+  flex: 1 1 350px;
+  .section-title {
+    padding: 15px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: $primary-color;
+    border-bottom: 2px solid $border-color;
+  }
+  .info-row {
+    .info-label {
+        background-color: $card-bg-color;
+    }
+  }
+}
+
+
+// Modal 스타일
+
+.license-modal-overlay {
+  position: fixed; /* 화면 전체 덮도록 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50; /* 페이지 어떤 요소보다 위에 오도록 */
+  
+  .modal-content {
+    width: 90%;
+    max-width: 600px;
+    
+    // 업로드 모달을 작게 만듭니다.
+    &.upload-modal {
+      width: 400px;
+      // 높이도 작게 설정
+      height: 200px;
+      // 내부 콘텐츠가 중앙에 오도록 flexbox 적용
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      border: none;
+    }
+  }
+
+  .copy-button {
+    background-color: #5d9cec; /* Primary blue color */
+    color: white;
+    
+    &:hover {
+      background-color: #4a7bbd; /* Darker blue on hover */
+    }
+  }
+
+  .close-button {
+    background-color: #7a7a7a; /* Gray color */
+    color: white;
+
+    &:hover {
+      background-color: #5f5f5f; /* Darker gray on hover */
+    }
+  }
+
+  .upload-button {
+    background-color: #27ae60; /* Green color */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #219d55; /* Darker green on hover */
+    }
+  }
+
+  .modal-body-content,
+  .modal-upload-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+
+    pre {
+      background-color: $secondary-color;
+      color: $text-color;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .upload-button {
+        // .modal-upload-content 내의 upload 버튼 스타일
+        width: 100%; // 너비 100%로 설정
+    }
+  }
+  
+}
+
+
+// 미디어 쿼리
+@media (max-width: 768px) {
+  .license-sections-container {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .license-section {
+    flex: 1 1 100%;
+    margin-bottom: 20px;
+    border-radius: 0;
+  }
+}

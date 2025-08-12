@@ -1,0 +1,220 @@
+
+/* 전체 페이지 높이를 뷰포트에 맞게 설정 */
+html,
+body {
+  height: 100%;
+  margin: 0; /* 기본 마진 제거 */
+  padding: 0;
+}
+.board-page {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  // min-height: 100vh; /* Ensure full viewport height */
+  height: 100%;
+  justify-content: center;
+  align-items: stretch;
+  padding: 9px 12px;
+  box-sizing: border-box; /* Include padding in height calculation */
+  overflow-y: auto; /* Enable scrolling for the entire page */
+}
+
+// .board-col {
+//   flex: 1 1 0;
+//   background: #232a3a;
+// //   border-radius: 12px;
+//   padding: 32px;
+//   color: #fff;
+//   min-width: 0;
+//   box-shadow: 0 2px 8px #0002;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: flex-start;
+//   border-radius: 12px;
+// }
+
+.board-col-left {
+  flex: 1 1 0;
+  background: #232a3a;
+  padding: 32px;
+  color: #fff;
+  min-width: 0; /* Prevent overflow */
+  box-shadow: 0 2px 8px #0002;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 12px;
+  overflow-y: auto;
+}
+.board-col-right {
+  flex: 1 1 0;
+  background: #232a3a;
+  padding: 32px;
+  color: #fff;
+  min-width: 0; /* Prevent overflow */
+  box-shadow: 0 2px 8px #0002;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 12px;
+  overflow-y: auto;
+}
+
+
+.section {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; // 높이 유연하게
+  min-height: 200px; // 최소 높이 확보
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section:nth-child(1) { flex-basis: 25%; }
+.section:nth-child(2) { flex-basis: 25%; }
+.section:nth-child(3) { flex-basis: 50%; }
+
+.scroll-area {
+  overflow-y: auto;
+  flex-grow: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+
+.progress-item, .team-item {
+  margin-bottom: 12px;
+  background: #fff;
+  color: #232a3a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-label {
+  min-width: 80px;
+  font-weight: 500;
+}
+
+.progress-num {
+  min-width: 28px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #7c3aed;
+  font-weight: bold;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 16px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #b46be4;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+
+@media (max-width: 800px) {
+  .board-page {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    font-size: 14px;
+  }
+  .board-col {
+    padding: 16px;
+    border-radius: 8px;
+  }
+}
+@media (max-width: 1200px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 800px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); // (선택) 아래 라인 넣고 싶으면
+}
+
+/* 1. 번쩍이는 애니메이션 효과 */
+@keyframes neon-shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 2. glow 효과 (주기적으로 외곽선 번쩍임) */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 6px #050000;
+  }
+  100% {
+    box-shadow: 0 0 20px #000000, 0 0 30px #000000;
+  }
+}
+
+/* 3. neon 클래스가 붙은 progress bar에만 적용 */
+.progress-fill.neon {
+  background: linear-gradient(
+    90deg,
+    #f7003e,
+    #ff4e4e,
+    #ff1e1e,
+    #af0000,
+    #ff1e1e
+  );
+  background-size: 200% 100%;
+  animation: neon-shine 4s linear infinite, glow 3s ease-in-out infinite alternate;
+  color: rgb(255, 255, 255);
+}
+/* Responsive font size adjustments */
+@media (max-width: 2000px) {
+  .board-page, .section, .scroll-area, .info-row span, .progress-item, .team-item, .progress-label, .progress-num {
+    font-size: 0.85rem; /* Slightly smaller at 1000px */
+  }
+}
+/* Responsive font size adjustments */
+@media (max-width: 1200px) {
+  .board-page, .section, .scroll-area, .info-row span, .progress-item, .team-item, .progress-label, .progress-num {
+    font-size: 0.75rem; /* Slightly smaller at 1000px */
+  }
+}
+
+@media (max-width: 800px) {
+  .board-page, .section, .scroll-area, .info-row span,.progress-item, .team-item, .progress-label, .progress-num {
+    font-size: 0.75rem; /* Smaller at 800px */
+  }
+}

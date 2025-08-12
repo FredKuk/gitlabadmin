@@ -1,0 +1,122 @@
+/* Right column section proportions */
+.right-area1 { flex-basis: 30%; }
+.right-area2 { flex-basis: 20%; }
+.right-area3 { flex-basis: 30%; }
+
+/* Table styling */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+  color: #232a3a;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table th {
+  text-align: center;
+  background: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.data-table td:first-child {
+  text-align: center;
+}
+
+
+/* 공통 스타일: Recent Users, Other Tables 등 */
+.table-col-widths th:nth-child(1),
+.table-col-widths td:nth-child(1) {
+  width: var(--col1-width, 15%);
+}
+
+.table-col-widths th:nth-child(2),
+.table-col-widths td:nth-child(2) {
+  width: var(--col2-width, 25%);
+}
+
+.table-col-widths th:nth-child(3),
+.table-col-widths td:nth-child(3) {
+  width: var(--col3-width, 20%);
+}
+
+.table-col-widths th:nth-child(4),
+.table-col-widths td:nth-child(4) {
+  width: var(--col4-width, 20%);
+}
+
+.table-col-widths th:nth-child(5),
+.table-col-widths td:nth-child(5) {
+  width: var(--col5-width, 20%);
+}
+
+.data-table tr:hover {
+  background: #f1f3f5;
+}
+
+.data-table td {
+  border-right: 1px solid #e0e0e0;
+}
+
+.data-table td:last-child {
+  border-right: none;
+}
+
+/* Status colors for Recent Users table */
+.status-new {
+  color: #28a745; /* Green */
+  font-weight: 500;
+}
+
+.status-ban {
+  color: #dc3545; /* Red */
+  font-weight: 500;
+}
+
+.status-lock {
+  color: #d4a017; /* Ochre */
+  font-weight: 500;
+}
+
+/* Activity colors for Recent Repositories table */
+.activity-new {
+  color: #28a745; /* Green */
+  font-weight: 500;
+}
+
+.activity-update {
+  color: #007bff; /* Blue */
+  font-weight: 500;
+}
+
+.activity-delete {
+  color: #dc3545; /* Red */
+  font-weight: 500;
+}
+
+/* Responsive adjustments for right column sections */
+@media (max-width: 1400px) {
+  .right-area1, .right-area2, .right-area3 {
+    flex-basis: auto;
+    min-height: 0; /* Prevent minimum height from causing overlap */
+  }
+}
+
+@media (max-height: 800px) {
+  .right-area1, .right-area2, .right-area3 {
+    flex-basis: auto;
+    min-height: 0; /* Prevent minimum height from causing overlap */
+  }
+}
