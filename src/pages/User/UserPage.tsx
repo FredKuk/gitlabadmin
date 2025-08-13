@@ -1,5 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './UserPage.scss';
+import React, { useState, useRef, useEffect } from "react";
+import "./UserPage.scss";
+
+const departments = [
+  "Dept 1",
+  "Dept 2",
+  "Dept 3",
+  "Dept 4",
+  "Dept 5",
+  "Dept 6",
+];
+const teams = [
+  "Team 1",
+  "Team 2",
+  "Team 3",
+  "Team 4",
+  "Team 5",
+  "Team 6",
+  "Team 7",
+];
 
 // 체크박스 드롭다운 컴포넌트
 interface DropdownCheckboxProps {
@@ -7,26 +25,32 @@ interface DropdownCheckboxProps {
   options: { id: string; name: string }[];
 }
 
-const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({ label, options }) => {
+const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
+  label,
+  options,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownRef]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleCheckboxChange = (id: string) => {
-    setSelectedItems(prev =>
-      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
@@ -34,22 +58,25 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({ label, options }) =
     if (selectedItems.length === options.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(options.map(option => option.id));
+      setSelectedItems(options.map((option) => option.id));
     }
   };
 
   const getLabel = () => {
     if (selectedItems.length === 0 || selectedItems.length === options.length) {
-      return `모든 ${label.split(' ')[1]}`;
+      return `모든 ${label.split(" ")[1]}`;
     }
-    return `선택 ${label.split(' ')[1]}`;
+    return `선택 ${label.split(" ")[1]}`;
   };
 
   return (
     <div className="dropdown-checkbox" ref={dropdownRef}>
-      <button onClick={toggleDropdown} className={`dropdown-toggle ${isOpen ? 'open' : ''}`}>
+      <button
+        onClick={toggleDropdown}
+        className={`dropdown-toggle ${isOpen ? "open" : ""}`}
+      >
         {getLabel()}
-        <span className="arrow">{isOpen ? '▲' : '▼'}</span>
+        <span className="arrow">{isOpen ? "▲" : "▼"}</span>
       </button>
       {isOpen && (
         <div className="dropdown-menu">
@@ -61,7 +88,7 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({ label, options }) =
             />
             <span>전체 선택</span>
           </label>
-          {options.map(option => (
+          {options.map((option) => (
             <label key={option.id} className="checkbox-item">
               <input
                 type="checkbox"
@@ -86,17 +113,23 @@ interface ProjectModalProps {
   };
 }
 
-const ProjectModal: React.FC<ProjectModalProps> = ({ onClose, mockProjectData }) => {
+const ProjectModal: React.FC<ProjectModalProps> = ({
+  onClose,
+  mockProjectData,
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
   return (
@@ -104,7 +137,9 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ onClose, mockProjectData })
       <div className="project-modal-content" ref={modalRef}>
         <div className="modal-header">
           <h3>프로젝트 상세</h3>
-          <button className="modal-close" onClick={onClose}>&times;</button>
+          <button className="modal-close" onClick={onClose}>
+            &times;
+          </button>
         </div>
         <div className="modal-body">
           <div className="modal-section">
@@ -169,12 +204,15 @@ const GroupModal: React.FC<GroupModalProps> = ({ onClose, mockGroupData }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
   return (
@@ -182,7 +220,9 @@ const GroupModal: React.FC<GroupModalProps> = ({ onClose, mockGroupData }) => {
       <div className="group-modal-content" ref={modalRef}>
         <div className="modal-header">
           <h3>GROUP 상세</h3>
-          <button className="modal-close" onClick={onClose}>&times;</button>
+          <button className="modal-close" onClick={onClose}>
+            &times;
+          </button>
         </div>
         <div className="modal-body">
           <div className="modal-section">
@@ -214,98 +254,231 @@ const GroupModal: React.FC<GroupModalProps> = ({ onClose, mockGroupData }) => {
   );
 };
 
+function EditableCell({
+  value,
+  options,
+  onChange,
+  invalid,
+  setInvalid,
+  rowId,
+  field,
+}: {
+  value: string;
+  options: string[];
+  onChange: (val: string) => void;
+  invalid: boolean;
+  setInvalid: (rowId: number, field: string, isInvalid: boolean) => void;
+  rowId: number;
+  field: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [input, setInput] = useState(
+    value && value.trim() !== "" ? value : "내용없음"
+  );
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setInput(value && value.trim() !== "" ? value : "내용없음");
+  }, [value]);
+
+  useEffect(() => {
+    if (!editing) return;
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        let newValue = input && input.trim() !== "" ? input : "내용없음";
+        console.log(newValue);
+        setInput(newValue);
+        // "내용없음"이거나 옵션에 없는 값이면 무조건 invalid
+        if (!options.includes(newValue)) {
+          console.log(rowId, field, newValue, "invalid");
+          setInvalid(rowId, field, true);
+        } else {
+          console.log(rowId, field, newValue, "valid");
+          setInvalid(rowId, field, false);
+        }
+        onChange(newValue);
+        setEditing(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [editing, input, options, onChange, rowId, field, setInvalid]);
+
+  const filteredOptions = options.filter((opt) =>
+    opt.toLowerCase().includes(input.toLowerCase())
+  );
+
+  const handleSelect = (option: string) => {
+    setInput(option);
+    setInvalid(rowId, field, false);
+    onChange(option);
+    setEditing(false);
+  };
+
+  return (
+    <div ref={ref} style={{ minWidth: 120 }}>
+      {editing ? (
+        <div>
+          <input
+            type="text"
+            value={input === "내용없음" ? "" : input}
+            autoFocus
+            onChange={(e) => setInput(e.target.value)}
+            onBlur={() => {
+              // input이 비거나 공백만 있으면 "내용없음"으로
+              if (!input || input.trim() === "") {
+                setInput("내용없음");
+                setInvalid(rowId, field, true);
+                onChange("내용없음");
+              }
+            }}
+            style={{
+              marginBottom: 4,
+              padding: "4px 8px",
+              borderRadius: 4,
+              border: invalid ? "1.5px solid #e74c3c" : "1px solid #4a4a4a",
+              background: "#383838",
+              color: invalid ? "#e74c3c" : "#e0e0e0",
+              width: "100%",
+            }}
+            placeholder="내용없음"
+          />
+          <div
+            style={{
+              background: "#383838",
+              border: "1px solid #4a4a4a",
+              maxHeight: 120,
+              overflowY: "auto",
+              borderRadius: 4,
+              marginTop: 2,
+            }}
+          >
+            {filteredOptions.length === 0 ? (
+              <div style={{ color: "#aaa", padding: 6 }}>No match</div>
+            ) : (
+              filteredOptions.map((opt) => (
+                <div
+                  key={opt}
+                  style={{
+                    padding: "6px 10px",
+                    cursor: "pointer",
+                    color: "#e0e0e0",
+                  }}
+                  onMouseDown={() => handleSelect(opt)}
+                >
+                  {opt}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      ) : (
+        <span
+          style={{
+            color: invalid ? "#e74c3c" : value && value.trim() !== "" ? "#e0e0e0" : "#aaa",
+            cursor: "pointer",
+            fontWeight: invalid ? "bold" : undefined,
+          }}
+          onClick={() => setEditing(true)}
+        >
+          {invalid ? input : value && value.trim() !== "" ? value : "내용없음"}
+        </span>
+      )}
+    </div>
+  );
+}
+
 // 메인 UserPage 컴포넌트
 export const UserPage = () => {
-  const [startDate, setStartDate] = useState('2020.01.01');
-  const [endDate, setEndDate] = useState('2025.08.12');
-  const [numberInput, setNumberInput] = useState('');
-  const [searchText, setSearchText] = useState('');
+  const [startDate, setStartDate] = useState("2020.01.01");
+  const [endDate, setEndDate] = useState("2025.08.12");
+  const [numberInput, setNumberInput] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
   const mockDepartments = [
-    { id: '1', name: '부서 A' },
-    { id: '2', name: '부서 B' },
-    { id: '3', name: '부서 C' },
+    { id: "1", name: "부서 A" },
+    { id: "2", name: "부서 B" },
+    { id: "3", name: "부서 C" },
   ];
   const mockTeams = [
-    { id: 't1', name: '팀 1' },
-    { id: 't2', name: '팀 2' },
-    { id: 't3', name: '팀 3' },
+    { id: "t1", name: "팀 1" },
+    { id: "t2", name: "팀 2" },
+    { id: "t3", name: "팀 3" },
   ];
   const mockEmployees = [
-    { id: 'e1', name: '직원 1' },
-    { id: 'e2', name: '직원 2' },
-    { id: 'e3', name: '직원 3' },
+    { id: "e1", name: "직원 1" },
+    { id: "e2", name: "직원 2" },
+    { id: "e3", name: "직원 3" },
   ];
   const mockProjects = [
-    { id: 'p1', name: '프로젝트 A' },
-    { id: 'p2', name: '프로젝트 B' },
-    { id: 'p3', name: '프로젝트 C' },
+    { id: "p1", name: "프로젝트 A" },
+    { id: "p2", name: "프로젝트 B" },
+    { id: "p3", name: "프로젝트 C" },
   ];
   const mockGroups = [
-    { id: 'g1', name: '그룹 1' },
-    { id: 'g2', name: '그룹 2' },
-    { id: 'g3', name: '그룹 3' },
+    { id: "g1", name: "그룹 1" },
+    { id: "g2", name: "그룹 2" },
+    { id: "g3", name: "그룹 3" },
   ];
   const mockStatuses = [
-    { id: 'active', name: '활성화' },
-    { id: 'inactive', name: '비활성화' },
-    { id: 'other', name: '그외' },
+    { id: "active", name: "활성화" },
+    { id: "inactive", name: "비활성화" },
+    { id: "other", name: "그외" },
   ];
 
   const mockTableData = Array.from({ length: 15 }).map((_, index) => ({
     id: 55 - index,
     name: `Teamuser ${55 - index}`,
     username: `user_${55 - index}`,
-    status: index % 2 === 0 ? 'Active' : 'Inactive',
+    status: index % 2 === 0 ? "Active" : "Inactive",
     createdAt: `2024-02-2${index % 10}`,
-    department: `Dept ${index % 3 + 1}`,
-    team: `Team ${index % 2 + 1}`,
+    department: `Dept ${(index % 3) + 1}`,
+    team: `Team ${(index % 2) + 1}`,
   }));
 
   const mockProjectData = {
     inProgress: [
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
-      { id: 5, name: '프로젝트 E', start: '2024.01.01', end: '2024.12.31' },
-      { id: 4, name: '프로젝트 F', start: '2023.07.15', end: '2024.11.30' },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
+      { id: 5, name: "프로젝트 E", start: "2024.01.01", end: "2024.12.31" },
+      { id: 4, name: "프로젝트 F", start: "2023.07.15", end: "2024.11.30" },
     ],
     completed: [
-      { id: 3, name: '프로젝트 G', start: '2022.03.01', end: '2023.06.30' },
-      { id: 2, name: '프로젝트 H', start: '2021.01.01', end: '2022.01.31' },
-      { id: 3, name: '프로젝트 G', start: '2022.03.01', end: '2023.06.30' },
-      { id: 2, name: '프로젝트 H', start: '2021.01.01', end: '2022.01.31' },
-      { id: 3, name: '프로젝트 G', start: '2022.03.01', end: '2023.06.30' },
-      { id: 2, name: '프로젝트 H', start: '2021.01.01', end: '2022.01.31' },
-      { id: 3, name: '프로젝트 G', start: '2022.03.01', end: '2023.06.30' },
-      { id: 2, name: '프로젝트 H', start: '2021.01.01', end: '2022.01.31' },
-      { id: 3, name: '프로젝트 G', start: '2022.03.01', end: '2023.06.30' },
-      { id: 2, name: '프로젝트 H', start: '2021.01.01', end: '2022.01.31' },
-      { id: 3, name: '프로젝트 G', start: '2022.03.01', end: '2023.06.30' },
-      { id: 2, name: '프로젝트 H', start: '2021.01.01', end: '2022.01.31' },
-    ]
+      { id: 3, name: "프로젝트 G", start: "2022.03.01", end: "2023.06.30" },
+      { id: 2, name: "프로젝트 H", start: "2021.01.01", end: "2022.01.31" },
+      { id: 3, name: "프로젝트 G", start: "2022.03.01", end: "2023.06.30" },
+      { id: 2, name: "프로젝트 H", start: "2021.01.01", end: "2022.01.31" },
+      { id: 3, name: "프로젝트 G", start: "2022.03.01", end: "2023.06.30" },
+      { id: 2, name: "프로젝트 H", start: "2021.01.01", end: "2022.01.31" },
+      { id: 3, name: "프로젝트 G", start: "2022.03.01", end: "2023.06.30" },
+      { id: 2, name: "프로젝트 H", start: "2021.01.01", end: "2022.01.31" },
+      { id: 3, name: "프로젝트 G", start: "2022.03.01", end: "2023.06.30" },
+      { id: 2, name: "프로젝트 H", start: "2021.01.01", end: "2022.01.31" },
+      { id: 3, name: "프로젝트 G", start: "2022.03.01", end: "2023.06.30" },
+      { id: 2, name: "프로젝트 H", start: "2021.01.01", end: "2022.01.31" },
+    ],
   };
 
   const mockGroupData = Array.from({ length: 20 }).map((_, index) => ({
     id: 10 + index,
     fullPath: `/path/to/group${10 + index}`,
-    adminTeam: `Admin Team ${index % 3 + 1}`,
-    project: `Project ${index % 2 + 1}`,
-    permission: index % 4 === 0 ? '읽기' : index % 4 === 1 ? '쓰기' : '관리',
-    date: `2024.01.0${index % 9 + 1}`,
+    adminTeam: `Admin Team ${(index % 3) + 1}`,
+    project: `Project ${(index % 2) + 1}`,
+    permission: index % 4 === 0 ? "읽기" : index % 4 === 1 ? "쓰기" : "관리",
+    date: `2024.01.0${(index % 9) + 1}`,
   }));
-
 
   const handleProjectViewClick = () => {
     setIsProjectModalOpen(true);
@@ -313,6 +486,46 @@ export const UserPage = () => {
 
   const handleGroupViewClick = () => {
     setIsGroupModalOpen(true);
+  };
+
+  // 테이블 데이터 상태 관리
+  const [tableData, setTableData] = useState(
+    mockTableData.map((row) => ({
+      ...row,
+      department: row.department || "내용없음",
+      team: row.team || "내용없음",
+    }))
+  );
+
+  // invalid 상태 관리
+  const [invalidMap, setInvalidMap] = useState<{ [key: string]: boolean }>({});
+
+  const setInvalid = (rowId: number, field: string, isInvalid: boolean) => {
+    setInvalidMap((prev) => ({
+      ...prev,
+      [`${rowId}_${field}`]: isInvalid,
+    }));
+  };
+
+  const handleCellChange = (
+    rowId: number,
+    field: "department" | "team",
+    value: string
+  ) => {
+    setTableData((prev) =>
+      prev.map((row) => (row.id === rowId ? { ...row, [field]: value } : row))
+    );
+  };
+
+  const hasInvalid = Object.values(invalidMap).some((v) => v);
+
+  const handleSave = () => {
+    if (hasInvalid) {
+      alert("잘못된 값이 있습니다. 빨간색 셀을 확인하세요.");
+      return;
+    }
+    // 저장 로직...
+    alert("저장 완료!");
   };
 
   return (
@@ -357,7 +570,9 @@ export const UserPage = () => {
             onChange={(e) => setSearchText(e.target.value)}
           />
           <button className="search-button">검색</button>
-          <button className="save-button">저장</button>
+          <button className="save-button" onClick={handleSave}>
+            저장
+          </button>
         </div>
       </div>
 
@@ -376,20 +591,52 @@ export const UserPage = () => {
               <span>project</span>
               <span>group</span>
             </div>
-            {mockTableData.map(row => (
+            {tableData.map((row) => (
               <div className="table-row" key={row.id}>
                 <span>{row.id}</span>
                 <span>{row.name}</span>
                 <span>{row.username}</span>
                 <span>{row.status}</span>
                 <span>{row.createdAt}</span>
-                <span>{row.department}</span>
-                <span>{row.team}</span>
                 <span>
-                  <button className="view-button" onClick={handleProjectViewClick}>View</button>
+                  <EditableCell
+                    value={row.department}
+                    options={departments}
+                    onChange={(val) =>
+                      handleCellChange(row.id, "department", val)
+                    }
+                    invalid={!!invalidMap[`${row.id}_department`]}
+                    setInvalid={setInvalid}
+                    rowId={row.id}
+                    field="department"
+                  />
                 </span>
                 <span>
-                  <button className="view-button" onClick={handleGroupViewClick}>View</button>
+                  <EditableCell
+                    value={row.team}
+                    options={teams}
+                    onChange={(val) => handleCellChange(row.id, "team", val)}
+                    invalid={!!invalidMap[`${row.id}_team`]}
+                    setInvalid={setInvalid}
+                    rowId={row.id}
+                    field="team"
+                  />
+                </span>
+                <span>
+                  <button
+                    className="view-button"
+                    onClick={handleProjectViewClick}
+                  >
+                    View
+                  </button>
+                </span>
+                <span>
+                  <button
+                    className="view-button"
+                    onClick={handleGroupViewClick}
+                  >
+                    View
+                  </button>
                 </span>
               </div>
             ))}
@@ -398,10 +645,16 @@ export const UserPage = () => {
       </div>
 
       {isProjectModalOpen && (
-        <ProjectModal onClose={() => setIsProjectModalOpen(false)} mockProjectData={mockProjectData} />
+        <ProjectModal
+          onClose={() => setIsProjectModalOpen(false)}
+          mockProjectData={mockProjectData}
+        />
       )}
       {isGroupModalOpen && (
-        <GroupModal onClose={() => setIsGroupModalOpen(false)} mockGroupData={mockGroupData} />
+        <GroupModal
+          onClose={() => setIsGroupModalOpen(false)}
+          mockGroupData={mockGroupData}
+        />
       )}
     </div>
   );
