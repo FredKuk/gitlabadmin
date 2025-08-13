@@ -14,7 +14,7 @@ $red-hover: #c0392b;
 .user-page {
   background-color: $bg-color;
   color: $text-color;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   min-height: 100vh;
   padding: 30px;
 }
@@ -169,12 +169,45 @@ $red-hover: #c0392b;
       max-height: 70vh;
       overflow-y: auto;
 
+      // 해상도가 낮을 때 max-height를 더 낮게
+      @media (max-height: 800px) {
+        max-height: 50vh;
+      }
+      @media (max-height: 600px) {
+        max-height: 40vh;
+      }
+
       .table-header,
       .table-row {
         display: grid;
-        grid-template-columns: 0.5fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr 0.5fr;
+        grid-template-columns:
+          minmax(32px, 0.3fr)   // # (아주 좁게)
+          minmax(60px, 0.7fr)   // name
+          minmax(60px, 0.7fr)   // username
+          minmax(60px, 0.7fr)   // author
+          minmax(60px, 0.7fr)   // status
+          minmax(80px, 0.7fr)   // created at
+          minmax(80px, 0.7fr)   // last login
+          minmax(120px, 1.8fr)  // department
+          minmax(120px, 1.8fr)  // team
+          minmax(60px, 0.7fr)   // project
+          minmax(60px, 0.7fr);  // group
         padding: 10px 15px;
         border-bottom: 1px solid $border-color;
+        justify-items: center;
+        align-items: center;
+      }
+
+      .table-header span,
+      .table-row span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .table-header {
@@ -237,9 +270,6 @@ $red-hover: #c0392b;
     border-radius: 10px;
     padding: 20px;
     width: 90%;
-    max-width: 800px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    color: $text-color;
   }
 
   .project-modal-content {
@@ -336,8 +366,8 @@ $red-hover: #c0392b;
           }
         }
       }
-      
-      .group-modal-table-content{
+
+      .group-modal-table-content {
         max-height: 65vh;
         overflow-y: auto;
 

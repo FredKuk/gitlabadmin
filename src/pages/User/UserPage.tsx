@@ -7,7 +7,7 @@ const departments = [
   "Dept 3",
   "Dept 4",
   "Dept 5",
-  "Dept 6",
+  "Deptasdfasdfasasdfdfasdf6",
 ];
 const teams = [
   "Team 1",
@@ -16,7 +16,7 @@ const teams = [
   "Team 4",
   "Team 5",
   "Team 6",
-  "Team 7",
+  "Teamasdfsadfasfaasdfsdf7",
 ];
 
 // 체크박스 드롭다운 컴포넌트
@@ -375,7 +375,11 @@ function EditableCell({
       ) : (
         <span
           style={{
-            color: invalid ? "#e74c3c" : value && value.trim() !== "" ? "#e0e0e0" : "#aaa",
+            color: invalid
+              ? "#e74c3c"
+              : value && value.trim() !== ""
+              ? "#e0e0e0"
+              : "#aaa",
             cursor: "pointer",
             fontWeight: invalid ? "bold" : undefined,
           }}
@@ -396,6 +400,15 @@ export const UserPage = () => {
   const [searchText, setSearchText] = useState("");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [filters, setFilters] = useState({
+    department: "모든 부서",
+    team: "모든 팀",
+    status: "모든 상태",
+    startDate: "",
+    endDate: "",
+    search: "",
+  });
 
   const mockDepartments = [
     { id: "1", name: "부서 A" },
@@ -408,9 +421,9 @@ export const UserPage = () => {
     { id: "t3", name: "팀 3" },
   ];
   const mockEmployees = [
-    { id: "e1", name: "직원 1" },
-    { id: "e2", name: "직원 2" },
-    { id: "e3", name: "직원 3" },
+    { id: "e1", name: "권한 1" },
+    { id: "e2", name: "권한 2" },
+    { id: "e3", name: "권한 3" },
   ];
   const mockProjects = [
     { id: "p1", name: "프로젝트 A" },
@@ -428,12 +441,15 @@ export const UserPage = () => {
     { id: "other", name: "그외" },
   ];
 
-  const mockTableData = Array.from({ length: 15 }).map((_, index) => ({
+  // 1. mockTableData에 author, lastLogin 필드 추가
+  const mockTableData = Array.from({ length: 55 }).map((_, index) => ({
     id: 55 - index,
     name: `Teamuser ${55 - index}`,
     username: `user_${55 - index}`,
+    author: `author_${(index % 5) + 1}`,
     status: index % 2 === 0 ? "Active" : "Inactive",
-    createdAt: `2024-02-2${index % 10}`,
+    createdAt: `2024-02-${(index % 28 + 1).toString().padStart(2, "0")}`,
+    lastLogin: `2024-03-${(index % 28 + 1).toString().padStart(2, "0")}`,
     department: `Dept ${(index % 3) + 1}`,
     team: `Team ${(index % 2) + 1}`,
   }));
@@ -528,13 +544,87 @@ export const UserPage = () => {
     alert("저장 완료!");
   };
 
+  const columns = [
+    { key: "id", label: "#" },
+    { key: "name", label: "name" },
+    { key: "username", label: "username" },
+    { key: "author", label: "author" },
+    { key: "status", label: "status" },
+    { key: "createdAt", label: "created at" },
+    { key: "lastLogin", label: "last login" },
+    { key: "department", label: "department" },
+    { key: "team", label: "team" },
+    { key: "project", label: "project", sortable: false },
+    { key: "group", label: "group", sortable: false },
+  ];
+
+  // 2. 정렬 및 필터링 적용
+  const handleHeaderClick = (key: string, sortable = true) => {
+    if (!sortable) return;
+    setSortConfig((prev) =>
+      prev && prev.key === key
+        ? { key, direction: prev.direction === "asc" ? "desc" : "asc" }
+        : { key, direction: "asc" }
+    );
+  };
+
+  const handleSearch = () => {
+    setFilters((prev) => ({ ...prev, search: searchText }));
+  };
+
+  // 3. 필터링 및 정렬된 데이터
+  const filteredData = tableData
+    .filter((row) => {
+      // 검색어
+      if (filters.search) {
+        const search = filters.search.toLowerCase();
+        if (
+          !row.name.toLowerCase().includes(search) &&
+          !row.username.toLowerCase().includes(search)
+        )
+          return false;
+      }
+      // 부서, 팀, 상태
+      if (filters.department && filters.department !== "모든 부서" && row.department !== filters.department) return false;
+      if (filters.team && filters.team !== "모든 팀" && row.team !== filters.team) return false;
+      if (filters.status && filters.status !== "모든 상태" && row.status !== filters.status) return false;
+      // 날짜
+      if (filters.startDate && row.createdAt < filters.startDate) return false;
+      if (filters.endDate && row.createdAt > filters.endDate) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (!sortConfig) return 0;
+      const { key, direction } = sortConfig;
+      // 타입 안전하게 any로 캐스팅
+      let aValue = (a as any)[key];
+      let bValue = (b as any)[key];
+
+      // 날짜 비교 (createdAt, lastLogin)
+      if (key === "createdAt" || key === "lastLogin") {
+        aValue = new Date(aValue);
+        bValue = new Date(bValue);
+      }
+
+      if (aValue == null) return 1;
+      if (bValue == null) return -1;
+
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+
   return (
     <div className="user-page">
       <div className="top-section">
         <div className="filter-container">
+          {/* 드롭다운에서 onChange 시 setFilters로 값 변경 */}
+          {/* 예시: */}
+          {/* <DropdownCheckbox label="모든 부서" options={mockDepartments} onChange={val => setFilters(f => ({ ...f, department: val }))} /> */}
+          {/* 아래는 기존 코드 유지, 실제로는 onChange 연결 필요 */}
           <DropdownCheckbox label="모든 부서" options={mockDepartments} />
           <DropdownCheckbox label="모든 팀" options={mockTeams} />
-          <DropdownCheckbox label="모든 직원" options={mockEmployees} />
+          <DropdownCheckbox label="모든 권한" options={mockEmployees} />
           <DropdownCheckbox label="모든 프로젝트" options={mockProjects} />
           <DropdownCheckbox label="모든 그룹" options={mockGroups} />
           <DropdownCheckbox label="모든 상태" options={mockStatuses} />
@@ -542,15 +632,17 @@ export const UserPage = () => {
           <div className="date-input-group">
             <input
               type="text"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              value={filters.startDate}
+              onChange={(e) => setFilters(f => ({ ...f, startDate: e.target.value }))}
               className="date-input"
+              placeholder="시작일"
             />
             <input
               type="text"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              value={filters.endDate}
+              onChange={(e) => setFilters(f => ({ ...f, endDate: e.target.value }))}
               className="date-input"
+              placeholder="종료일"
             />
             <input
               type="number"
@@ -569,7 +661,9 @@ export const UserPage = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
-          <button className="search-button">검색</button>
+          <button className="search-button" onClick={handleSearch}>
+            검색
+          </button>
           <button className="save-button" onClick={handleSave}>
             저장
           </button>
@@ -581,23 +675,27 @@ export const UserPage = () => {
           <h3 className="table-title">User List</h3>
           <div className="table-content">
             <div className="table-header">
-              <span>#</span>
-              <span>name</span>
-              <span>username</span>
-              <span>status</span>
-              <span>created at</span>
-              <span>department</span>
-              <span>team</span>
+              <span onClick={() => handleHeaderClick("id")}>#</span>
+              <span onClick={() => handleHeaderClick("name")}>name</span>
+              <span onClick={() => handleHeaderClick("username")}>username</span>
+              <span onClick={() => handleHeaderClick("author")}>author</span>
+              <span onClick={() => handleHeaderClick("status")}>status</span>
+              <span onClick={() => handleHeaderClick("createdAt")}>created at</span>
+              <span onClick={() => handleHeaderClick("lastLogin")}>last login</span>
+              <span onClick={() => handleHeaderClick("department")}>department</span>
+              <span onClick={() => handleHeaderClick("team")}>team</span>
               <span>project</span>
               <span>group</span>
             </div>
-            {tableData.map((row) => (
+            {filteredData.map((row) => (
               <div className="table-row" key={row.id}>
                 <span>{row.id}</span>
                 <span>{row.name}</span>
                 <span>{row.username}</span>
+                <span>{row.author}</span>
                 <span>{row.status}</span>
                 <span>{row.createdAt}</span>
+                <span>{row.lastLogin}</span>
                 <span>
                   <EditableCell
                     value={row.department}
