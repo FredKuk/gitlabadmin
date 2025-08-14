@@ -117,7 +117,7 @@ export const LicencePage: React.FC = () => {
   return (
     <div className="license-page">
       <div className="table-wrapper">
-        <h2>License 화면</h2>
+        <h2>License/Config</h2>
 
         <div className="license-info-top">
           <div className="info-row">
