@@ -282,6 +282,7 @@ function EditableCell({
   setInvalid,
   rowId,
   field,
+  isModified, // 추가
 }: {
   value: string;
   options: string[];
@@ -290,15 +291,18 @@ function EditableCell({
   setInvalid: (rowId: number, field: string, isInvalid: boolean) => void;
   rowId: number;
   field: string;
+  isModified?: boolean; // 추가
 }) {
   const [editing, setEditing] = useState(false);
   const [input, setInput] = useState(
     value && value.trim() !== "" ? value : "내용없음"
   );
+  const [isModifiedState, setIsModified] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setInput(value && value.trim() !== "" ? value : "내용없음");
+    setIsModified(false); // value prop이 변경되면 수정 상태 초기화
   }, [value]);
 
   useEffect(() => {
@@ -317,6 +321,7 @@ function EditableCell({
           setInvalid(rowId, field, false);
         }
         onChange(newValue);
+        setIsModified(true); // 수정이 완료되면 isModified를 true로 설정
         setEditing(false);
       }
     };
@@ -394,15 +399,11 @@ function EditableCell({
         </div>
       ) : (
         <span
-          style={{
-            color: invalid
-              ? "#e74c3c"
-              : value && value.trim() !== ""
-              ? "#e0e0e0"
-              : "#aaa",
-            cursor: "pointer",
-            fontWeight: invalid ? "bold" : undefined,
-          }}
+          className={[
+            "editable-cell",
+            invalid ? "invalid" : "",
+            !invalid && isModified ? "modified" : "",
+          ].join(" ")}
           onClick={() => setEditing(true)}
         >
           {invalid ? input : value && value.trim() !== "" ? value : "내용없음"}
@@ -525,6 +526,11 @@ export const UserPage = () => {
 
   // invalid 상태 관리
   const [invalidMap, setInvalidMap] = useState<{ [key: string]: boolean }>({});
+  // 수정 여부 상태 관리
+  const [modifiedMap, setModifiedMap] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const [showModifiedOnly, setShowModifiedOnly] = useState(false);
 
   const setInvalid = (rowId: number, field: string, isInvalid: boolean) => {
     setInvalidMap((prev) => ({
@@ -541,6 +547,8 @@ export const UserPage = () => {
     setTableData((prev) =>
       prev.map((row) => (row.id === rowId ? { ...row, [field]: value } : row))
     );
+    // 수정된 셀을 modifiedMap에 기록
+    setModifiedMap((prev) => ({ ...prev, [`${rowId}_${field}`]: true }));
   };
 
   const hasInvalid = Object.values(invalidMap).some((v) => v);
@@ -664,6 +672,15 @@ export const UserPage = () => {
         }
       }
 
+      // 수정된것만 보기 체크박스 필터
+      if (showModifiedOnly) {
+        const isDepartmentModified = modifiedMap[`${row.id}_department`];
+        const isTeamModified = modifiedMap[`${row.id}_team`];
+        if (!isDepartmentModified && !isTeamModified) {
+          return false;
+        }
+      }
+
       return true;
     })
     .sort((a, b) => {
@@ -771,7 +788,15 @@ export const UserPage = () => {
                 checked={showInvalidOnly}
                 onChange={(e) => setShowInvalidOnly(e.target.checked)}
               />
-              Invalid만 보기
+              Invalid
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={showModifiedOnly}
+                onChange={(e) => setShowModifiedOnly(e.target.checked)}
+              />
+              Modified
             </label>
             <button className="orange-button">자동완성</button>
           </div>
@@ -843,6 +868,7 @@ export const UserPage = () => {
                     setInvalid={setInvalid}
                     rowId={row.id}
                     field="department"
+                    isModified={!!modifiedMap[`${row.id}_department`]} // 추가
                   />
                 </span>
                 <span>

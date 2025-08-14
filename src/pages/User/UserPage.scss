@@ -413,12 +413,25 @@ $red-hover: #c0392b;
 }
 
 .orange-button {
-  background-color: orange;
+  background-color: rgb(255, 123, 0);
   color: white;
   border: none;
   padding: 8px 16px;
   cursor: pointer;
   border-radius: 4px;
+}
+
+.editable-cell {
+  color: #e0e0e0;
+  cursor: pointer;
+
+  &.invalid {
+    color: #e74c3c !important; // invalid가 최우선
+    font-weight: bold;
+  }
+  &.modified {
+    color: #3498db;
+  }
 }
 
 /* 반응형 스타일 */
