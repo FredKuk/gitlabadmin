@@ -142,11 +142,31 @@ h2 {
 .license-section {
   flex: 1 1 350px;
   .section-title {
-    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 1rem;
     font-weight: 600;
     color: $primary-color;
     border-bottom: 2px solid $border-color;
+    padding: 4px 0;
+
+    .section-title-left {
+      flex: 1;
+      text-align: left;
+    }
+    .section-title-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.95em;
+      .section-version {
+        color: #f7c873;
+      }
+      .section-os {
+        color: #7ed6df;
+      }
+    }
   }
   .info-row {
     .info-label {

@@ -39,6 +39,8 @@ const mockData = {
 // 재사용 가능한 ServiceSection 컴포넌트의 타입 정의
 interface ServiceSectionProps {
   title: string;
+  version: string; // version 추가
+  os: string; // os 추가
   data: { label: string; date: string; content: string }[];
   licenseButtons: string[];
   onView: (content: string) => void;
@@ -48,6 +50,8 @@ interface ServiceSectionProps {
 
 const ServiceSection: React.FC<ServiceSectionProps> = ({
   title,
+  version,
+  os,
   data,
   licenseButtons,
   onView,
@@ -55,7 +59,13 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
   onUpload,
 }) => (
   <div className="license-section">
-    <div className="section-title">{title}</div>
+    <div className="section-title">
+      <span className="section-title-left">{title}</span>
+      <span className="section-title-right">
+        <span className="section-version">ver. {version}</span>
+        <span className="section-os">{os}</span>
+      </span>
+    </div>
     {data.map((item, index) => (
       <div key={index} className="info-row license-row">
         <div className="info-label">{item.label}</div>
@@ -186,6 +196,8 @@ export const LicencePage: React.FC = () => {
         <div className="license-sections-container">
           <ServiceSection
             title="Primary"
+            version="1.0" // version prop 추가
+            os="Linux" // os prop 추가
             data={mockData.serviceData}
             licenseButtons={mockData.licenseButtons}
             onView={handleViewClick}
@@ -194,6 +206,8 @@ export const LicencePage: React.FC = () => {
           />
           <ServiceSection
             title="Secondary"
+            version="1.0" // version prop 추가
+            os="Linux" // os prop 추가
             data={mockData.serviceData}
             licenseButtons={mockData.licenseButtons}
             onView={handleViewClick}
@@ -202,6 +216,8 @@ export const LicencePage: React.FC = () => {
           />
           <ServiceSection
             title="DR"
+            version="1.0" // version prop 추가
+            os="Linux" // os prop 추가
             data={mockData.serviceData}
             licenseButtons={mockData.licenseButtons}
             onView={handleViewClick}
