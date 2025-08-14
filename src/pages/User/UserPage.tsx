@@ -428,6 +428,7 @@ export const UserPage = () => {
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [showInvalidOnly, setShowInvalidOnly] = useState(false);
 
   const [filters, setFilters] = useState({
     department: "모든 부서",
@@ -641,7 +642,6 @@ export const UserPage = () => {
       // 날짜
       if (filters.startDate && row.createdAt < filters.startDate) return false;
       if (filters.endDate && row.createdAt > filters.endDate) return false;
-
       // 숫자 입력 필터
       if (numberInput) {
         const lastLoginDate = new Date(row.lastLogin);
@@ -651,6 +651,15 @@ export const UserPage = () => {
         );
         // console.log(numberInput, lastLoginDate, today, diffInDays);
         if (diffInDays < parseInt(numberInput, 10)) {
+          return false;
+        }
+      }
+
+      // Invalid만 보기 체크박스 필터
+      if (showInvalidOnly) {
+        const isDepartmentInvalid = invalidMap[`${row.id}_department`];
+        const isTeamInvalid = invalidMap[`${row.id}_team`];
+        if (!isDepartmentInvalid && !isTeamInvalid) {
           return false;
         }
       }
@@ -702,21 +711,10 @@ export const UserPage = () => {
             onChange={setSelectedAuthors}
           />
           <DropdownCheckbox
-            label="모든 프로젝트"
-            options={mockProjects}
-            onChange={() => {}}
-          />
-          <DropdownCheckbox
-            label="모든 그룹"
-            options={mockGroups}
-            onChange={() => {}}
-          />
-          <DropdownCheckbox
             label="모든 상태"
             options={statuses}
             onChange={setSelectedStatuses}
           />
-
           <div className="date-input-group">
             <input
               type="text"
@@ -767,6 +765,15 @@ export const UserPage = () => {
               onChange={(e) => setNumberInput(e.target.value)}
               className="number-input"
             />
+            <label>
+              <input
+                type="checkbox"
+                checked={showInvalidOnly}
+                onChange={(e) => setShowInvalidOnly(e.target.checked)}
+              />
+              Invalid만 보기
+            </label>
+            <button className="orange-button">자동완성</button>
           </div>
         </div>
         <div className="search-group">

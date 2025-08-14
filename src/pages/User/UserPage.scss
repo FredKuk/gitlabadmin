@@ -118,7 +118,7 @@ $red-hover: #c0392b;
       color: $text-color;
       padding: 10px 15px;
       border-radius: 5px;
-      width: 250px;
+      width: 100px;
     }
 
     .search-button,
@@ -171,27 +171,26 @@ $red-hover: #c0392b;
 
       // 해상도가 낮을 때 max-height를 더 낮게
       @media (max-height: 800px) {
-        max-height: 50vh;
+        max-height: 60vh;
       }
       @media (max-height: 600px) {
-        max-height: 40vh;
+        max-height: 50vh;
       }
 
       .table-header,
       .table-row {
         display: grid;
-        grid-template-columns:
-          minmax(32px, 0.3fr)   // # (아주 좁게)
-          minmax(60px, 0.7fr)   // name
-          minmax(60px, 0.7fr)   // username
-          minmax(60px, 0.7fr)   // author
-          minmax(60px, 0.7fr)   // status
-          minmax(80px, 0.7fr)   // created at
-          minmax(80px, 0.7fr)   // last login
-          minmax(120px, 1.8fr)  // department
-          minmax(120px, 1.8fr)  // team
-          minmax(60px, 0.7fr)   // project
-          minmax(60px, 0.7fr);  // group
+        grid-template-columns: minmax(32px, 0.3fr) // # (아주 좁게)
+          minmax(60px, 0.7fr) // name
+          minmax(60px, 0.7fr) // username
+          minmax(60px, 0.7fr) // author
+          minmax(60px, 0.7fr) // status
+          minmax(80px, 0.7fr) // created at
+          minmax(80px, 0.7fr) // last login
+          minmax(120px, 1.8fr) // department
+          minmax(120px, 1.8fr) // team
+          minmax(60px, 0.7fr) // project
+          minmax(60px, 0.7fr); // group
         padding: 10px 15px;
         border-bottom: 1px solid $border-color;
         justify-items: center;
@@ -411,6 +410,15 @@ $red-hover: #c0392b;
       }
     }
   }
+}
+
+.orange-button {
+  background-color: orange;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 /* 반응형 스타일 */
