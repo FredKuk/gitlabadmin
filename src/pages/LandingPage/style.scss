@@ -87,7 +87,11 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 80%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 80%
+  );
   animation: sparkle 10s infinite linear;
   pointer-events: none;
 }
@@ -136,10 +140,16 @@
   padding: 4px 8px; /* 호버 영역을 넓히기 위해 약간의 패딩 추가 */
 }
 
-.main-menu-item:hover,
-.main-menu-item:active { /* :active 추가로 모바일 터치 지원 */
+.main-menu-item:hover {
   color: #59db4e;
   background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+/* 선택된 메뉴 스타일 추가 */
+.main-menu-item.active {
+  color: #59db4e;
+  background: rgba(89, 219, 78, 0.2);
   border-radius: 6px;
 }
 

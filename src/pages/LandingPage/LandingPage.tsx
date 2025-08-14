@@ -1,6 +1,13 @@
-import React, { JSX, useState } from "react";
+import React, { JSX } from "react";
 import "./style.scss";
-import { CenterContent } from "./CenterContent";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { BoardPage } from "../Board/BoardPage";
+import { LicencePage } from "../License/LicensePage";
+import { UserPage } from "../User/UserPage";
+import { GroupPage } from "../Group/GroupPage";
+import { TeamPage } from "../Team/TeamPage";
+import { PipelinePage } from "../Pipeline/PipelinePage";
+import { RunnerPage } from "../Runner/RunnerPage";
 
 type MainProps = {
   text: string;
@@ -30,7 +37,18 @@ const menuList = [
 ];
 
 export const LandingPage = (): JSX.Element => {
-  const [selected, setSelected] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleMenuClick = (menu: string) => {
+    const path = `/${menu.toLowerCase()}`;
+    if (location.pathname === path) {
+      // 같은 페이지면 강제 리로드
+      window.location.reload();
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
     <div className="landing-page">
@@ -48,8 +66,8 @@ export const LandingPage = (): JSX.Element => {
                   <Main
                     key={menu}
                     text={menu}
-                    onClick={setSelected}
-                    active={selected === menu}
+                    onClick={handleMenuClick}
+                    active={location.pathname === `/${menu.toLowerCase()}`}
                   />
                 ))}
               </div>
@@ -61,7 +79,21 @@ export const LandingPage = (): JSX.Element => {
           </div>
           <div className="center-area">
             <div className="banner-wrapper">
-              <CenterContent selected={selected} />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <img className="image" alt="logo" src="/image/banner.png" />
+                  }
+                />
+                <Route path="/board" element={<BoardPage />} />
+                <Route path="/licence" element={<LicencePage />} />
+                <Route path="/user" element={<UserPage />} />
+                <Route path="/group" element={<GroupPage />} />
+                <Route path="/team" element={<TeamPage />} />
+                <Route path="/pipeline" element={<PipelinePage />} />
+                <Route path="/runner" element={<RunnerPage />} />
+              </Routes>
             </div>
           </div>
         </div>
