@@ -111,16 +111,20 @@ export const LicencePage: React.FC = () => {
 
         <div className="license-info-top">
           <div className="info-row">
-            <div className="info-label">기간</div>
-            <div className="info-value info-border-right">
+            <div className="info-label little-padding">기간</div>
+            <div className="info-value info-border-right little-padding">
               {mockData.period.start}
             </div>
-            <div className="info-value">{mockData.period.end}</div>
+            <div className="info-value little-padding">
+              {mockData.period.end}
+            </div>
           </div>
           <div className="info-row license-row">
-            <div className="info-label">라이센스</div>
-            <div className="info-value-wide">{mockData.license}</div>
-            <div className="license-buttons-row">
+            <div className="info-label little-padding">라이센스</div>
+            <div className="info-value-wide little-padding">
+              {mockData.license}
+            </div>
+            <div className="license-buttons-row  little-padding">
               {mockData.licenseButtons.map((button, index) => (
                 <button
                   key={index}
@@ -148,9 +152,9 @@ export const LicencePage: React.FC = () => {
           </div>
           {mockData.certificateData.map((item, index) => (
             <div key={index} className="info-row license-row">
-              <div className="info-label">{item.label}</div>
-              <div className="info-value-wide">{item.date}</div>
-              <div className="license-buttons-row">
+              <div className="info-label little-padding">{item.label}</div>
+              <div className="info-value-wide little-padding">{item.date}</div>
+              <div className="license-buttons-row little-padding">
                 {mockData.licenseButtons.map((button, buttonIndex) => (
                   <button
                     key={buttonIndex}

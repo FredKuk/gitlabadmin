@@ -60,13 +60,16 @@ h2 {
   &:last-child {
     border-bottom: none;
   }
-
+  .little-padding {
+    padding: 4px !important;
+  }
   .info-label {
     font-weight: 600;
     width: 120px;
     padding: 15px;
     background-color: $secondary-color;
     border-right: 1px solid $border-color;
+    text-align: center;
   }
 
   .info-value,
@@ -139,8 +142,8 @@ h2 {
 .license-section {
   flex: 1 1 350px;
   .section-title {
-    padding: 15px;
-    font-size: 1.3rem;
+    padding: 12px;
+    font-size: 1rem;
     font-weight: 600;
     color: $primary-color;
     border-bottom: 2px solid $border-color;
@@ -346,4 +349,26 @@ h2 {
       max-height: 60vh;
     }
   }
+}
+
+// LicensePage.scss 또는 LicencePage.scss
+.service-table {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.service-header-row,
+.service-row {
+  display: flex;
+  align-items: center;
+}
+.service-header,
+.service-cell {
+  flex: 1;
+  padding: 6px 8px;
+  text-align: center;
+}
+.service-header {
+  font-weight: bold;
+  background: #361f0f;
+  border-bottom: 1px solid #5f5f5f;
 }
