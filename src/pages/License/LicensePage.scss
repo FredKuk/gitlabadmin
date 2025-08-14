@@ -12,11 +12,23 @@ $card-bg-color: #383838;
   padding: 30px;
   background-color: $background-color;
   color: $text-color;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  font-size: 1.1vw; // 화면 너비에 따라 폰트 크기 자동 조정
+
+  .table-wrapper {
+    max-height: 80vh; // 화면 높이에 따라 테이블 높이 제한
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    font-size: 1em;
+  }
 }
 
 h2 {
@@ -44,11 +56,11 @@ h2 {
   display: flex;
   align-items: center;
   border-bottom: 1px solid $border-color;
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   .info-label {
     font-weight: 600;
     width: 120px;
@@ -57,7 +69,8 @@ h2 {
     border-right: 1px solid $border-color;
   }
 
-  .info-value, .info-value-wide {
+  .info-value,
+  .info-value-wide {
     padding: 15px;
     word-break: break-all;
   }
@@ -67,30 +80,51 @@ h2 {
     text-align: center;
     border-right: 1px solid $border-color;
   }
-  
+
   .info-value-wide {
     flex: 2;
+    padding: 15px;
+    word-break: break-all;
+    font-size: 0.9em; // 폰트 크기 줄임
+    min-width: 160px; // 공간 넓힘 (원하는 만큼 조절)
+    white-space: nowrap; // 한 줄로 표시
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  
+
   .license-buttons {
     display: flex;
-    gap: 10px;
-    padding: 10px;
+    flex-direction: column;
+    gap: 2px; // 버튼 간격 더 줄임
+    padding: 0 2px;
+    min-width: 56px; // 최소 너비 더 줄임
+    align-items: flex-end;
 
     button {
-      background-color: #444;
-      color: $text-color;
-      border: 1px solid #666;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background-color 0.2s, border-color 0.2s;
+      padding: 2px 6px; // 버튼 패딩 최소화
+      font-size: 0.72em; // 폰트 크기 더 줄임
+      min-width: 48px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
 
-      &:hover {
-        background-color: $primary-color;
-        border-color: $primary-color;
-      }
+    .primary {
+      background: #5d9cec;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+    }
+    .secondary {
+      background: #384252;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+    }
+    .dr {
+      background: #e67e22;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
     }
   }
 }
@@ -98,7 +132,7 @@ h2 {
 .license-sections-container {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   align-items: flex-start;
 }
 
@@ -113,11 +147,10 @@ h2 {
   }
   .info-row {
     .info-label {
-        background-color: $card-bg-color;
+      background-color: $card-bg-color;
     }
   }
 }
-
 
 // Modal 스타일
 
@@ -132,11 +165,11 @@ h2 {
   justify-content: center;
   align-items: center;
   z-index: 50; /* 페이지 어떤 요소보다 위에 오도록 */
-  
+
   .modal-content {
     width: 90%;
     max-width: 600px;
-    
+
     // 업로드 모달을 작게 만듭니다.
     &.upload-modal {
       width: 400px;
@@ -149,7 +182,7 @@ h2 {
       align-items: center;
     }
   }
-  
+
   .modal-buttons {
     display: flex;
     justify-content: flex-end;
@@ -168,7 +201,7 @@ h2 {
   .copy-button {
     background-color: #5d9cec; /* Primary blue color */
     color: white;
-    
+
     &:hover {
       background-color: #4a7bbd; /* Darker blue on hover */
     }
@@ -222,13 +255,74 @@ h2 {
       gap: 10px;
     }
     .upload-button {
-        // .modal-upload-content 내의 upload 버튼 스타일
-        width: 100%; // 너비 100%로 설정
+      // .modal-upload-content 내의 upload 버튼 스타일
+      width: 100%; // 너비 100%로 설정
     }
   }
-  
 }
 
+// info(상단) 버튼: 가로 배치
+.license-buttons-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+
+  button {
+    padding: 4px 14px;
+    font-size: 0.85em;
+    min-width: 60px;
+    border-radius: 5px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  }
+}
+
+// service(아래) 버튼: 세로 배치
+.license-buttons-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+
+  button {
+    padding: 2px 10px;
+    font-size: 0.75em;
+    min-width: 48px;
+    border-radius: 4px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  }
+}
+
+// 버튼 색상 공통
+.primary {
+  background: #5d9cec;
+  color: #fff;
+  &:hover {
+    background: #4177c2;
+  }
+}
+.secondary {
+  background: #384252;
+  color: #fff;
+  &:hover {
+    background: #232831;
+  }
+}
+.dr {
+  background: #e67e22;
+  color: #fff;
+  &:hover {
+    background: #c76b13;
+  }
+}
 
 // 미디어 쿼리
 @media (max-width: 768px) {
@@ -236,10 +330,20 @@ h2 {
     flex-direction: column;
     gap: 0;
   }
-  
+
   .license-section {
     flex: 1 1 100%;
     margin-bottom: 20px;
     border-radius: 0;
+  }
+}
+
+// 해상도 작을 때 폰트/테이블 크기 조정
+@media (max-width: 900px) {
+  .license-page {
+    font-size: 2vw;
+    .table-wrapper {
+      max-height: 60vh;
+    }
   }
 }
