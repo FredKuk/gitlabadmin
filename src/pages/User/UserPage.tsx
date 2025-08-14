@@ -642,6 +642,19 @@ export const UserPage = () => {
       if (filters.startDate && row.createdAt < filters.startDate) return false;
       if (filters.endDate && row.createdAt > filters.endDate) return false;
 
+      // 숫자 입력 필터
+      if (numberInput) {
+        const lastLoginDate = new Date(row.lastLogin);
+        const today = new Date();
+        const diffInDays = Math.floor(
+          (today.getTime() - lastLoginDate.getTime()) / (1000 * 3600 * 24)
+        );
+        // console.log(numberInput, lastLoginDate, today, diffInDays);
+        if (diffInDays < parseInt(numberInput, 10)) {
+          return false;
+        }
+      }
+
       return true;
     })
     .sort((a, b) => {
@@ -708,20 +721,44 @@ export const UserPage = () => {
             <input
               type="text"
               value={filters.startDate}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, startDate: e.target.value }))
-              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 허용
+                if (value.length <= 8) {
+                  let formattedValue = value;
+                  if (value.length > 4) {
+                    formattedValue =
+                      value.substring(0, 4) +
+                      "-" +
+                      value.substring(4, 6) +
+                      (value.length > 6 ? "-" + value.substring(6, 8) : "");
+                  }
+                  setFilters((f) => ({ ...f, startDate: formattedValue }));
+                }
+              }}
               className="date-input"
               placeholder="시작일"
+              maxLength={10} // 최대 길이 제한 (YYYY-MM-DD)
             />
             <input
               type="text"
               value={filters.endDate}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, endDate: e.target.value }))
-              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 허용
+                if (value.length <= 8) {
+                  let formattedValue = value;
+                  if (value.length > 4) {
+                    formattedValue =
+                      value.substring(0, 4) +
+                      "-" +
+                      value.substring(4, 6) +
+                      (value.length > 6 ? "-" + value.substring(6, 8) : "");
+                  }
+                  setFilters((f) => ({ ...f, endDate: formattedValue }));
+                }
+              }}
               className="date-input"
               placeholder="종료일"
+              maxLength={10} // 최대 길이 제한 (YYYY-MM-DD)
             />
             <input
               type="number"
