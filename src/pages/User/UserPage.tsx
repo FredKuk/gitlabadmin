@@ -2,32 +2,48 @@ import React, { useState, useRef, useEffect } from "react";
 import "./UserPage.scss";
 
 const departments = [
-  "Dept 1",
-  "Dept 2",
-  "Dept 3",
-  "Dept 4",
-  "Dept 5",
-  "Deptasdfasdfasasdfdfasdf6",
+  { id: "1", name: "Dept 1" },
+  { id: "2", name: "Dept 2" },
+  { id: "3", name: "Dept 3" },
+  { id: "4", name: "Dept 4" },
+  { id: "5", name: "Dept 5" },
+  { id: "6", name: "Dept 6" },
 ];
 const teams = [
-  "Team 1",
-  "Team 2",
-  "Team 3",
-  "Team 4",
-  "Team 5",
-  "Team 6",
-  "Teamasdfsadfasfaasdfsdf7",
+  { id: "1", name: "Team 1" },
+  { id: "2", name: "Team 2" },
+  { id: "3", name: "Team 3" },
+  { id: "4", name: "Team 4" },
+  { id: "5", name: "Team 5" },
+  { id: "6", name: "Team 6" },
+];
+
+const authors = [
+  { id: "1", name: "author_1" },
+  { id: "2", name: "author_2" },
+  { id: "3", name: "author_3" },
+  { id: "4", name: "author_4" },
+  { id: "5", name: "author_5" },
+  { id: "6", name: "author_6" },
+];
+
+const statuses = [
+  { id: "1", name: "Active" },
+  { id: "2", name: "Inactive" },
+  { id: "3", name: "Others" },
 ];
 
 // 체크박스 드롭다운 컴포넌트
 interface DropdownCheckboxProps {
   label: string;
   options: { id: string; name: string }[];
+  onChange: (selectedIds: string[]) => void; // Add onChange prop
 }
 
 const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
   label,
   options,
+  onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -45,6 +61,10 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownRef]);
+
+  useEffect(() => {
+    onChange(selectedItems); // Notify parent component when selectedItems change
+  }, [selectedItems, onChange]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -400,31 +420,25 @@ export const UserPage = () => {
   const [searchText, setSearchText] = useState("");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
   const [filters, setFilters] = useState({
     department: "모든 부서",
     team: "모든 팀",
+    author: "모든 권한",
     status: "모든 상태",
     startDate: "",
     endDate: "",
     search: "",
   });
 
-  const mockDepartments = [
-    { id: "1", name: "부서 A" },
-    { id: "2", name: "부서 B" },
-    { id: "3", name: "부서 C" },
-  ];
-  const mockTeams = [
-    { id: "t1", name: "팀 1" },
-    { id: "t2", name: "팀 2" },
-    { id: "t3", name: "팀 3" },
-  ];
-  const mockEmployees = [
-    { id: "e1", name: "권한 1" },
-    { id: "e2", name: "권한 2" },
-    { id: "e3", name: "권한 3" },
-  ];
   const mockProjects = [
     { id: "p1", name: "프로젝트 A" },
     { id: "p2", name: "프로젝트 B" },
@@ -435,11 +449,6 @@ export const UserPage = () => {
     { id: "g2", name: "그룹 2" },
     { id: "g3", name: "그룹 3" },
   ];
-  const mockStatuses = [
-    { id: "active", name: "활성화" },
-    { id: "inactive", name: "비활성화" },
-    { id: "other", name: "그외" },
-  ];
 
   // 1. mockTableData에 author, lastLogin 필드 추가
   const mockTableData = Array.from({ length: 55 }).map((_, index) => ({
@@ -448,8 +457,8 @@ export const UserPage = () => {
     username: `user_${55 - index}`,
     author: `author_${(index % 5) + 1}`,
     status: index % 2 === 0 ? "Active" : "Inactive",
-    createdAt: `2024-02-${(index % 28 + 1).toString().padStart(2, "0")}`,
-    lastLogin: `2024-03-${(index % 28 + 1).toString().padStart(2, "0")}`,
+    createdAt: `2024-02-${((index % 28) + 1).toString().padStart(2, "0")}`,
+    lastLogin: `2024-03-${((index % 28) + 1).toString().padStart(2, "0")}`,
     department: `Dept ${(index % 3) + 1}`,
     team: `Team ${(index % 2) + 1}`,
   }));
@@ -584,13 +593,55 @@ export const UserPage = () => {
         )
           return false;
       }
-      // 부서, 팀, 상태
-      if (filters.department && filters.department !== "모든 부서" && row.department !== filters.department) return false;
-      if (filters.team && filters.team !== "모든 팀" && row.team !== filters.team) return false;
-      if (filters.status && filters.status !== "모든 상태" && row.status !== filters.status) return false;
+
+      // Departments filter
+      if (
+        selectedDepartments.length > 0 &&
+        !selectedDepartments.some((deptId) => {
+          const selectedDept = departments.find((d) => d.id === deptId);
+          return selectedDept ? row.department === selectedDept.name : false;
+        })
+      ) {
+        return false;
+      }
+
+      // Teams filter
+      if (
+        selectedTeams.length > 0 &&
+        !selectedTeams.some((teamId) => {
+          const selectedTeam = teams.find((t) => t.id === teamId);
+          return selectedTeam ? row.team === selectedTeam.name : false;
+        })
+      ) {
+        return false;
+      }
+
+      // Authors filter
+      if (
+        selectedAuthors.length > 0 &&
+        !selectedAuthors.some((authorId) => {
+          const selectedAuthor = authors.find((a) => a.id === authorId);
+          return selectedAuthor ? row.author === selectedAuthor.name : false;
+        })
+      ) {
+        return false;
+      }
+
+      // Statuses filter
+      if (
+        selectedStatuses.length > 0 &&
+        !selectedStatuses.some((statusId) => {
+          const selectedStatus = statuses.find((s) => s.id === statusId);
+          return selectedStatus ? row.status === selectedStatus.name : false;
+        })
+      ) {
+        return false;
+      }
+
       // 날짜
       if (filters.startDate && row.createdAt < filters.startDate) return false;
       if (filters.endDate && row.createdAt > filters.endDate) return false;
+
       return true;
     })
     .sort((a, b) => {
@@ -622,25 +673,53 @@ export const UserPage = () => {
           {/* 예시: */}
           {/* <DropdownCheckbox label="모든 부서" options={mockDepartments} onChange={val => setFilters(f => ({ ...f, department: val }))} /> */}
           {/* 아래는 기존 코드 유지, 실제로는 onChange 연결 필요 */}
-          <DropdownCheckbox label="모든 부서" options={mockDepartments} />
-          <DropdownCheckbox label="모든 팀" options={mockTeams} />
-          <DropdownCheckbox label="모든 권한" options={mockEmployees} />
-          <DropdownCheckbox label="모든 프로젝트" options={mockProjects} />
-          <DropdownCheckbox label="모든 그룹" options={mockGroups} />
-          <DropdownCheckbox label="모든 상태" options={mockStatuses} />
+          <DropdownCheckbox
+            label="모든 부서"
+            options={departments}
+            onChange={setSelectedDepartments}
+          />
+          <DropdownCheckbox
+            label="모든 팀"
+            options={teams}
+            onChange={setSelectedTeams}
+          />
+          <DropdownCheckbox
+            label="모든 권한"
+            options={authors}
+            onChange={setSelectedAuthors}
+          />
+          <DropdownCheckbox
+            label="모든 프로젝트"
+            options={mockProjects}
+            onChange={() => {}}
+          />
+          <DropdownCheckbox
+            label="모든 그룹"
+            options={mockGroups}
+            onChange={() => {}}
+          />
+          <DropdownCheckbox
+            label="모든 상태"
+            options={statuses}
+            onChange={setSelectedStatuses}
+          />
 
           <div className="date-input-group">
             <input
               type="text"
               value={filters.startDate}
-              onChange={(e) => setFilters(f => ({ ...f, startDate: e.target.value }))}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, startDate: e.target.value }))
+              }
               className="date-input"
               placeholder="시작일"
             />
             <input
               type="text"
               value={filters.endDate}
-              onChange={(e) => setFilters(f => ({ ...f, endDate: e.target.value }))}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, endDate: e.target.value }))
+              }
               className="date-input"
               placeholder="종료일"
             />
@@ -660,6 +739,11 @@ export const UserPage = () => {
             className="search-input"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
           />
           <button className="search-button" onClick={handleSearch}>
             검색
@@ -677,12 +761,20 @@ export const UserPage = () => {
             <div className="table-header">
               <span onClick={() => handleHeaderClick("id")}>#</span>
               <span onClick={() => handleHeaderClick("name")}>name</span>
-              <span onClick={() => handleHeaderClick("username")}>username</span>
+              <span onClick={() => handleHeaderClick("username")}>
+                username
+              </span>
               <span onClick={() => handleHeaderClick("author")}>author</span>
               <span onClick={() => handleHeaderClick("status")}>status</span>
-              <span onClick={() => handleHeaderClick("createdAt")}>created at</span>
-              <span onClick={() => handleHeaderClick("lastLogin")}>last login</span>
-              <span onClick={() => handleHeaderClick("department")}>department</span>
+              <span onClick={() => handleHeaderClick("createdAt")}>
+                created at
+              </span>
+              <span onClick={() => handleHeaderClick("lastLogin")}>
+                last login
+              </span>
+              <span onClick={() => handleHeaderClick("department")}>
+                department
+              </span>
               <span onClick={() => handleHeaderClick("team")}>team</span>
               <span>project</span>
               <span>group</span>
@@ -699,7 +791,7 @@ export const UserPage = () => {
                 <span>
                   <EditableCell
                     value={row.department}
-                    options={departments}
+                    options={departments.map((d) => d.name)}
                     onChange={(val) =>
                       handleCellChange(row.id, "department", val)
                     }
@@ -712,7 +804,7 @@ export const UserPage = () => {
                 <span>
                   <EditableCell
                     value={row.team}
-                    options={teams}
+                    options={teams.map((t) => t.name)}
                     onChange={(val) => handleCellChange(row.id, "team", val)}
                     invalid={!!invalidMap[`${row.id}_team`]}
                     setInvalid={setInvalid}
