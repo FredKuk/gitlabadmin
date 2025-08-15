@@ -1,21 +1,22 @@
 .group-page {
-  width: 100vw;
-  height: 100vh;
+  width: 100vw; // width는 그대로
+  height: 100vh; // 기본 높이
   margin: 0;
-  padding: 0; // 10px에서 0으로 변경
+  padding: 0;
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  overflow: hidden; // 전체 페이지 스크롤 방지
+  overflow: hidden;
 
   .tab-container {
     display: flex;
-    margin: 10px 10px 10px 10px; // padding 대신 margin 사용
+    margin: 10px;
     background-color: #e9ecef;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
+    height: 50px; // 고정 높이
 
     .tab {
       flex: 1;
@@ -42,15 +43,17 @@
   .content-area {
     flex: 1;
     background-color: white;
-    margin: 0 10px 10px 10px; // padding 대신 margin 사용
+    margin: 0 10px 10px 10px;
     border-radius: 8px;
-    padding: 10px; // 내부 패딩만 유지
+    padding: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
-    min-height: 0; // flexbox에서 필수
+    min-height: 0;
     display: flex;
     flex-direction: column;
+    // 계산된 높이: 100vh - tab높이(50px) - 마진들(30px) - 패딩(30px)
+    height: calc(100vh - 110px);
   }
 
   .graph-view {
@@ -60,8 +63,8 @@
     min-height: 0;
 
     .controls {
-      margin-bottom: 10px;
-      padding: 10px;
+      margin-bottom: 15px;
+      padding: 12px;
       background-color: #f8f9fa;
       border-radius: 8px;
       flex-shrink: 0;
@@ -70,6 +73,7 @@
       justify-content: space-between;
       gap: 20px;
       flex-wrap: wrap;
+      min-height: 45px; // 최소 높이 보장
 
       .control-buttons {
         display: flex;
@@ -83,8 +87,9 @@
           font-size: 14px;
           cursor: pointer;
           transition: all 0.3s ease;
-          background-color: #007bff; // 두 버튼 모두 동일한 파란색
+          background-color: #007bff;
           color: white;
+          white-space: nowrap;
 
           &:hover {
             background-color: #0056b3;
@@ -104,6 +109,7 @@
           cursor: pointer;
           font-weight: 500;
           color: #495057;
+          white-space: nowrap;
 
           input[type="checkbox"] {
             margin-right: 8px;
@@ -117,79 +123,180 @@
       }
     }
 
-    .tree-container {
+    // 메인 컨텐츠 영역
+    .main-content {
       flex: 1;
-      position: relative;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      background-color: #fefefe;
-      overflow: auto;
-      min-height: 0; // flexbox에서 필수
+      display: flex;
+      gap: 15px;
+      min-height: 0;
+      transition: all 0.3s ease;
+      // controls 높이를 제외한 나머지 공간 사용
+      height: calc(100% - 75px);
 
-      // D3 Tree 스타일 커스터마이징
-      .rd3t-tree-container {
-        width: 100% !important;
-        height: 100% !important;
-        min-width: 100%;
-        min-height: 100%;
+      &.with-side-panel {
+        .tree-container {
+          width: 70%;
+          flex: none;
+        }
+      }
 
-        svg {
+      .tree-container {
+        flex: 1;
+        width: 100%;
+        position: relative;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: #fefefe;
+        overflow: auto;
+        min-height: 0;
+        transition: width 0.3s ease;
+
+        // D3 Tree 스타일 커스터마이징
+        .rd3t-tree-container {
           width: 100% !important;
           height: 100% !important;
           min-width: 100%;
           min-height: 100%;
-          overflow: visible;
-          cursor: default !important;
 
-          // 모든 하위 요소의 드래그 비활성화
-          * {
-            pointer-events: none;
-          }
+          svg {
+            width: 100% !important;
+            height: 100% !important;
+            min-width: 100%;
+            min-height: 100%;
+            overflow: visible;
+            cursor: default !important;
 
-          // 노드와 텍스트는 클릭 가능하게
-          .rd3t-node,
-          .rd3t-node *,
-          rect,
-          text {
-            pointer-events: auto !important;
-            cursor: pointer !important;
+            // 모든 하위 요소의 드래그 비활성화
+            * {
+              pointer-events: none;
+            }
+
+            // 노드와 텍스트는 클릭 가능하게
+            .rd3t-node,
+            .rd3t-node *,
+            rect,
+            text,
+            circle {
+              pointer-events: auto !important;
+              cursor: pointer !important;
+            }
           }
+        }
+
+        .rd3t-node {
+          cursor: pointer;
+        }
+
+        .rd3t-link {
+          stroke: #95a5a6;
+          stroke-width: 2px;
+          fill: none;
+          pointer-events: none;
+        }
+
+        // 스크롤바 커스터마이징
+        &::-webkit-scrollbar {
+          width: 10px;
+          height: 10px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 5px;
+
+          &:hover {
+            background: #a8a8a8;
+          }
+        }
+
+        &::-webkit-scrollbar-corner {
+          background: #f1f1f1;
         }
       }
 
-      .rd3t-node {
-        cursor: pointer;
-      }
+      // 사이드 패널
+      .side-panel {
+        width: 30%;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        animation: slideIn 0.3s ease;
+        flex-shrink: 0;
 
-      .rd3t-link {
-        stroke: #95a5a6;
-        stroke-width: 2px;
-        fill: none;
-        pointer-events: none;
-      }
+        .side-panel-header {
+          padding: 15px;
+          background-color: #007bff;
+          color: white;
+          border-radius: 6px 6px 0 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-shrink: 0;
 
-      // 스크롤바 커스터마이징
-      &::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
+          h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+          }
 
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-      }
+          .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
 
-      &::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 4px;
-
-        &:hover {
-          background: #a8a8a8;
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.2);
+            }
+          }
         }
-      }
 
-      &::-webkit-scrollbar-corner {
-        background: #f1f1f1;
+        .side-panel-content {
+          padding: 15px;
+          flex: 1;
+          overflow-y: auto;
+
+          .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            label {
+              font-weight: 600;
+              color: #495057;
+              font-size: 12px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            span {
+              color: #212529;
+              font-size: 14px;
+              padding: 8px;
+              background-color: white;
+              border: 1px solid #dee2e6;
+              border-radius: 4px;
+              word-break: break-all;
+            }
+          }
+        }
       }
     }
   }
@@ -208,27 +315,183 @@
   }
 }
 
-// 반응형 처리
-@media (max-width: 768px) {
-  .controls {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 15px !important;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
-    .control-buttons {
-      justify-content: center;
+// 매우 큰 높이 (1200px 이상)
+@media (min-height: 1200px) {
+  .group-page {
+    height: 100vh; // 충분히 크면 100%
+  }
+}
+
+// 큰 높이 (1080px ~ 1199px)
+@media (min-height: 1080px) and (max-height: 1199px) {
+  .group-page {
+    height: 98vh; // 98%로 살짝 줄임
+  }
+}
+
+// 일반 높이 (900px ~ 1079px)
+@media (min-height: 900px) and (max-height: 1079px) {
+  .group-page {
+    height: 95vh; // 95%로 줄임
+  }
+}
+
+// 중간 높이 (800px ~ 899px)
+@media (min-height: 800px) and (max-height: 899px) {
+  .group-page {
+    height: 92vh; // 92%로 줄임
+  }
+}
+
+// 작은 높이 (700px ~ 799px)
+@media (min-height: 700px) and (max-height: 799px) {
+  .group-page {
+    height: 88vh; // 88%로 줄임
+  }
+}
+
+// 더 작은 높이 (600px ~ 699px)
+@media (min-height: 600px) and (max-height: 699px) {
+  .group-page {
+    height: 85vh; // 85%로 줄임
+  }
+}
+
+// 작은 높이 (500px ~ 599px)
+@media (min-height: 500px) and (max-height: 599px) {
+  .group-page {
+    height: 80vh; // 80%로 줄임
+  }
+}
+
+// 매우 작은 높이 (400px ~ 499px)
+@media (min-height: 400px) and (max-height: 499px) {
+  .group-page {
+    height: 75vh; // 75%로 줄임
+  }
+}
+
+// 극소 높이 (300px ~ 399px)
+@media (min-height: 300px) and (max-height: 399px) {
+  .group-page {
+    height: 70vh; // 70%로 줄임
+  }
+}
+
+// 최소 높이 (299px 이하)
+@media (max-height: 299px) {
+  .group-page {
+    height: 65vh; // 65%로 최소화
+  }
+}
+
+// 대형 화면 (1920px 이상)
+@media (min-width: 1920px) {
+  .group-page {
+    .tab-container {
+      margin: 15px;
+      height: 60px;
+
+      .tab {
+        padding: 16px 32px;
+        font-size: 18px;
+      }
     }
 
-    .control-checkbox {
-      text-align: center;
+    .content-area {
+      margin: 0 15px 15px 15px;
+      padding: 20px;
+      height: calc(100vh - 135px);
+    }
+
+    .controls {
+      padding: 15px !important;
+      margin-bottom: 20px !important;
+      min-height: 55px !important;
+    }
+
+    .main-content {
+      gap: 20px !important;
+      height: calc(100% - 95px) !important;
     }
   }
 }
 
-@media (max-height: 600px) {
+// 중간 화면 (1366px ~ 1919px)
+@media (min-width: 1366px) and (max-width: 1919px) {
+  .group-page {
+    .content-area {
+      padding: 12px;
+      height: calc(100vh - 102px);
+    }
+
+    .controls {
+      padding: 10px !important;
+      margin-bottom: 12px !important;
+      min-height: 42px !important;
+    }
+
+    .main-content {
+      gap: 12px !important;
+      height: calc(100% - 69px) !important;
+    }
+  }
+}
+
+// 작은 화면 (768px ~ 1365px)
+@media (min-width: 769px) and (max-width: 1365px) {
+  .group-page {
+    .tab-container {
+      margin: 8px;
+      height: 45px;
+
+      .tab {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+    }
+
+    .content-area {
+      margin: 0 8px 8px 8px;
+      padding: 10px;
+      height: calc(100vh - 98px);
+    }
+
+    .controls {
+      padding: 8px !important;
+      margin-bottom: 10px !important;
+      min-height: 40px !important;
+
+      .control-btn {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+    }
+
+    .main-content {
+      gap: 10px !important;
+      height: calc(100% - 65px) !important;
+    }
+  }
+}
+
+// 모바일 화면 (768px 이하)
+@media (max-width: 768px) {
   .group-page {
     .tab-container {
       margin: 5px;
+      height: 40px;
 
       .tab {
         padding: 8px 16px;
@@ -239,24 +502,79 @@
     .content-area {
       margin: 0 5px 5px 5px;
       padding: 8px;
+      height: calc(100vh - 85px);
     }
 
     .controls {
-      margin-bottom: 8px !important;
-      padding: 8px !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+      padding: 10px !important;
+      margin-bottom: 10px !important;
+      min-height: 80px !important;
+
+      .control-buttons {
+        justify-content: center;
+
+        .control-btn {
+          padding: 8px 12px !important;
+          font-size: 13px !important;
+        }
+      }
+
+      .control-checkbox {
+        text-align: center;
+      }
+    }
+
+    .main-content {
+      height: calc(100% - 105px) !important;
+
+      &.with-side-panel {
+        flex-direction: column !important;
+        gap: 10px !important;
+
+        .tree-container {
+          width: 100% !important;
+          height: 55% !important;
+        }
+
+        .side-panel {
+          width: 100% !important;
+          height: 45% !important;
+        }
+      }
     }
   }
 }
 
-// 특별한 그룹 색상
-.architect {
-  background-color: #5d9cec !important;
-}
+// 매우 작은 높이 화면 (600px 이하)
+@media (max-height: 600px) {
+  .group-page {
+    .tab-container {
+      margin: 3px;
+      height: 35px;
 
-.inspector {
-  background-color: #e67e22 !important;
-}
+      .tab {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+    }
 
-.developer {
-  background-color: #27ae60 !important;
+    .content-area {
+      margin: 0 3px 3px 3px;
+      padding: 5px;
+      height: calc(100vh - 70px);
+    }
+
+    .controls {
+      margin-bottom: 5px !important;
+      padding: 5px !important;
+      min-height: 35px !important;
+    }
+
+    .main-content {
+      height: calc(100% - 50px) !important;
+    }
+  }
 }

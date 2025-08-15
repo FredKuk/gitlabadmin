@@ -27,7 +27,10 @@ export const GroupPage: React.FC = () => {
     new Set()
   );
   const [showFullTree, setShowFullTree] = useState(false);
-  const [showPermissionGroups, setShowPermissionGroups] = useState(false); // 권한그룹보기
+  const [showPermissionGroups, setShowPermissionGroups] = useState(false);
+  // 사이드 패널 관련 state 추가
+  const [showSidePanel, setShowSidePanel] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
   useEffect(() => {
     const loadData = () => {
@@ -63,6 +66,22 @@ export const GroupPage: React.FC = () => {
     return ["alarm", "architect", "developer", "inspector"].includes(
       name.toLowerCase()
     );
+  };
+
+  // 그룹 상세보기 버튼 클릭 핸들러
+  const handleGroupDetailClick = (groupId: number, event: React.MouseEvent) => {
+    event.stopPropagation(); // 노드 클릭 이벤트 방지
+    const group = groups.find((g) => g.id === groupId);
+    if (group) {
+      setSelectedGroup(group);
+      setShowSidePanel(true);
+    }
+  };
+
+  // 사이드 패널 닫기
+  const closeSidePanel = () => {
+    setShowSidePanel(false);
+    setSelectedGroup(null);
   };
 
   const buildTree = (groupsData: Group[], projectsData: Project[]) => {
@@ -331,15 +350,22 @@ export const GroupPage: React.FC = () => {
     // 특별한 그룹인지 확인 (테두리 제외 대상)
     const needsBorder = !isSpecialGroup(nodeDatum.name);
 
+    // 일반 그룹(특별 그룹 제외)인지 확인
+    const isRegularGroup =
+      nodeType === "group" &&
+      !nodeDatum.attributes?.isSharedGroup &&
+      !isSpecialGroup(nodeDatum.name) &&
+      !isVirtualRoot;
+
     return (
       <g>
         <rect
           width="160"
-          height="28" // 40에서 28로 줄임 (높이 감소)
+          height="28"
           x="-80"
-          y="-14" // -20에서 -14로 조정 (중앙 정렬 유지)
+          y="-14"
           fill={nodeColor}
-          rx="6" // 8에서 6으로 줄임 (모서리 둥글기)
+          rx="6"
           ry="6"
           stroke={
             needsBorder
@@ -348,9 +374,9 @@ export const GroupPage: React.FC = () => {
                 : "#34495e"
               : "#fff"
           }
-          strokeWidth={needsBorder ? "2" : "1"} // 3에서 2로, 2에서 1로 줄임
+          strokeWidth={needsBorder ? "2" : "1"}
           strokeDasharray={
-            needsBorder && nodeType === "project" ? "4,4" : "none" // 5,5에서 4,4로
+            needsBorder && nodeType === "project" ? "4,4" : "none"
           }
           style={{ cursor: "pointer" }}
           onClick={() => handleNodeClick(nodeDatum)}
@@ -359,10 +385,10 @@ export const GroupPage: React.FC = () => {
           fill="white"
           strokeWidth="0"
           x="0"
-          y="3" // 5에서 3으로 조정 (낮은 높이에 맞춰)
+          y="3"
           textAnchor="middle"
           style={{
-            font: "bold 10px sans-serif", // 11px에서 10px로 줄임
+            font: "bold 10px sans-serif",
             cursor: "pointer",
           }}
           onClick={() => handleNodeClick(nodeDatum)}
@@ -376,10 +402,10 @@ export const GroupPage: React.FC = () => {
               fill="white"
               strokeWidth="0"
               x="65"
-              y="-8" // -10에서 -8로 조정
+              y="-8"
               textAnchor="middle"
               style={{
-                font: "bold 12px sans-serif", // 14px에서 12px로 줄임
+                font: "bold 12px sans-serif",
                 cursor: "pointer",
               }}
               onClick={() => handleNodeClick(nodeDatum)}
@@ -387,6 +413,34 @@ export const GroupPage: React.FC = () => {
               {isExpanded ? "−" : "+"}
             </text>
           )}
+        {/* 일반 그룹에만 상세보기 버튼 추가 */}
+        {isRegularGroup && (
+          <circle
+            cx="50"
+            cy="8"
+            r="8"
+            fill="#007bff"
+            stroke="#fff"
+            strokeWidth="1"
+            style={{ cursor: "pointer" }}
+            onClick={(e) => handleGroupDetailClick(nodeId, e)}
+          />
+        )}
+        {isRegularGroup && (
+          <text
+            x="50"
+            y="12"
+            textAnchor="middle"
+            fill="white"
+            style={{
+              font: "bold 10px sans-serif",
+              cursor: "pointer",
+              pointerEvents: "none",
+            }}
+          >
+            i
+          </text>
+        )}
       </g>
     );
   };
@@ -439,22 +493,82 @@ export const GroupPage: React.FC = () => {
                 </label>
               </div>
             </div>
-            <div className="tree-container">
-              {treeData.length > 0 && (
-                <Tree
-                  data={treeData}
-                  orientation="horizontal"
-                  translate={{ x: 100, y: 50 }}
-                  pathFunc="step"
-                  renderCustomNodeElement={renderCustomNodeElement}
-                  separation={{ siblings: 0.6, nonSiblings: 0.9 }} // 0.5, 0.8에서 살짝 증가
-                  nodeSize={{ x: 200, y: 65 }} // 60에서 65로 5만큼 증가
-                  zoom={0.8}
-                  collapsible={false}
-                  enableLegacyTransitions={false}
-                  transitionDuration={0}
-                  scaleExtent={{ min: 0.3, max: 3 }}
-                />
+
+            <div
+              className={`main-content ${
+                showSidePanel ? "with-side-panel" : ""
+              }`}
+            >
+              <div className="tree-container">
+                {treeData.length > 0 && (
+                  <Tree
+                    data={treeData}
+                    orientation="horizontal"
+                    translate={{ x: 100, y: 50 }}
+                    pathFunc="step"
+                    renderCustomNodeElement={renderCustomNodeElement}
+                    separation={{ siblings: 0.6, nonSiblings: 0.9 }}
+                    nodeSize={{ x: 200, y: 65 }}
+                    zoom={0.8}
+                    collapsible={false}
+                    enableLegacyTransitions={false}
+                    transitionDuration={0}
+                    scaleExtent={{ min: 0.3, max: 3 }}
+                  />
+                )}
+              </div>
+
+              {/* 사이드 패널 */}
+              {showSidePanel && selectedGroup && (
+                <div className="side-panel">
+                  <div className="side-panel-header">
+                    <h3>그룹 상세정보</h3>
+                    <button className="close-btn" onClick={closeSidePanel}>
+                      ×
+                    </button>
+                  </div>
+                  <div className="side-panel-content">
+                    <div className="info-item">
+                      <label>그룹명:</label>
+                      <span>{selectedGroup.name}</span>
+                    </div>
+                    <div className="info-item">
+                      <label>전체 경로:</label>
+                      <span>{selectedGroup.full_path}</span>
+                    </div>
+                    <div className="info-item">
+                      <label>ID:</label>
+                      <span>{selectedGroup.id}</span>
+                    </div>
+                    <div className="info-item">
+                      <label>설명:</label>
+                      <span>
+                        {(selectedGroup as any).description ||
+                          "설명이 없습니다."}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <label>생성일:</label>
+                      <span>
+                        {new Date(
+                          selectedGroup.created_at
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <label>가시성:</label>
+                      <span>
+                        {(selectedGroup as any).visibility || "설정되지 않음"}
+                      </span>
+                    </div>
+                    {selectedGroup.parent_id && (
+                      <div className="info-item">
+                        <label>상위 그룹 ID:</label>
+                        <span>{selectedGroup.parent_id}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
           </div>
