@@ -12,6 +12,7 @@ interface D3TreeNode {
     type: "group" | "project";
     full_path?: string;
     isSharedGroup?: boolean;
+    isVirtualRoot?: boolean;
   };
   children?: D3TreeNode[];
 }
@@ -47,8 +48,13 @@ export const GroupPage: React.FC = () => {
   }, [expandedNodes, expandedProjects, showFullTree, groups, projects]);
 
   const buildTree = (groupsData: Group[], projectsData: Project[]) => {
-    // parent_id가 null인 최상위 그룹들만 (PPA만 보여야 함)
+    // parent_id가 null인 최상위 그룹들 찾기
     const rootGroups = groupsData.filter((group) => group.parent_id === null);
+    console.log(
+      "Root groups found:",
+      rootGroups.length,
+      rootGroups.map((g) => g.name)
+    );
 
     const buildChildren = (groupId: number): D3TreeNode[] => {
       // showFullTree가 false이고 expandedNodes에 없으면 children 반환하지 않음
@@ -64,7 +70,7 @@ export const GroupPage: React.FC = () => {
       );
       childGroups.forEach((group) => {
         children.push({
-          name: group.name, // 그룹은 name만 표시
+          name: group.name,
           attributes: {
             id: group.id,
             type: "group",
@@ -89,9 +95,9 @@ export const GroupPage: React.FC = () => {
         ) {
           project.shared_with_groups.forEach((sharedGroup, index) => {
             projectChildren.push({
-              name: sharedGroup.group_full_path, // group_full_path로 표현
+              name: sharedGroup.group_full_path,
               attributes: {
-                id: -(project.id * 1000 + index), // 고유한 음수 ID 생성
+                id: -(project.id * 1000 + index),
                 type: "group",
                 full_path: sharedGroup.group_full_path,
                 isSharedGroup: true,
@@ -101,7 +107,7 @@ export const GroupPage: React.FC = () => {
         }
 
         const projectNode: D3TreeNode = {
-          name: project.name, // 프로젝트는 name만 표시
+          name: project.name,
           attributes: {
             id: project.id,
             type: "project",
@@ -116,43 +122,65 @@ export const GroupPage: React.FC = () => {
       return children;
     };
 
-    const tree = rootGroups.map((rootGroup) => ({
-      name: rootGroup.name, // 최상위도 name만
-      attributes: {
-        id: rootGroup.id,
-        type: "group" as const,
-        full_path: rootGroup.full_path,
-      },
-      children: buildChildren(rootGroup.id),
-    }));
+    let tree: D3TreeNode[];
+
+    if (rootGroups.length === 1) {
+      // 루트 그룹이 하나면 그대로 사용
+      tree = [
+        {
+          name: rootGroups[0].name,
+          attributes: {
+            id: rootGroups[0].id,
+            type: "group",
+            full_path: rootGroups[0].full_path,
+          },
+          children: buildChildren(rootGroups[0].id),
+        },
+      ];
+    } else if (rootGroups.length > 1) {
+      // 루트 그룹이 여러 개면 가상 루트 생성
+      tree = [
+        {
+          name: "ROOT",
+          attributes: {
+            id: -999,
+            type: "group",
+            full_path: "root",
+            isVirtualRoot: true,
+          },
+          children: rootGroups.map((rootGroup) => ({
+            name: rootGroup.name,
+            attributes: {
+              id: rootGroup.id,
+              type: "group",
+              full_path: rootGroup.full_path,
+            },
+            children: buildChildren(rootGroup.id),
+          })),
+        },
+      ];
+      // 가상 루트는 항상 확장된 상태로 설정
+      const newExpandedNodes = new Set(expandedNodes);
+      newExpandedNodes.add(-999);
+      if (!expandedNodes.has(-999)) {
+        setExpandedNodes(newExpandedNodes);
+      }
+    } else {
+      tree = [];
+    }
 
     setTreeData(tree);
-  };
-
-  // 그룹을 접을 때 하위 그룹들도 모두 접기
-  const collapseAllChildren = (groupId: number, groupsData: Group[]) => {
-    const childGroups = groupsData.filter(
-      (group) => group.parent_id === groupId
-    );
-    const newExpandedNodes = new Set(expandedNodes);
-
-    const removeChildrenRecursively = (parentId: number) => {
-      const children = groupsData.filter(
-        (group) => group.parent_id === parentId
-      );
-      children.forEach((child) => {
-        newExpandedNodes.delete(child.id);
-        removeChildrenRecursively(child.id);
-      });
-    };
-
-    removeChildrenRecursively(groupId);
-    setExpandedNodes(newExpandedNodes);
   };
 
   const handleNodeClick = (nodeData: any) => {
     const nodeId = nodeData.attributes?.id;
     const nodeType = nodeData.attributes?.type;
+    const isVirtualRoot = nodeData.attributes?.isVirtualRoot;
+
+    // 가상 루트는 클릭해도 동작하지 않음
+    if (isVirtualRoot) {
+      return;
+    }
 
     if (nodeType === "group" && nodeId && !nodeData.attributes?.isSharedGroup) {
       const newExpandedNodes = new Set(expandedNodes);
@@ -169,7 +197,7 @@ export const GroupPage: React.FC = () => {
           });
         };
         removeChildrenRecursively(nodeId);
-        setExpandedNodes(newExpandedNodes); // 이 부분이 중요!
+        setExpandedNodes(newExpandedNodes);
       } else {
         newExpandedNodes.add(nodeId);
         setExpandedNodes(newExpandedNodes);
@@ -220,6 +248,17 @@ export const GroupPage: React.FC = () => {
   };
 
   const renderCustomNodeElement = ({ nodeDatum }: any) => {
+    const isVirtualRoot = nodeDatum.attributes?.isVirtualRoot;
+
+    // 가상 루트는 투명하게 처리
+    if (isVirtualRoot) {
+      return (
+        <g>
+          <circle r="5" fill="transparent" stroke="transparent" />
+        </g>
+      );
+    }
+
     const nodeColor = getNodeColor(
       nodeDatum.name,
       nodeDatum.attributes?.type || "group"
@@ -340,13 +379,16 @@ export const GroupPage: React.FC = () => {
                 <Tree
                   data={treeData}
                   orientation="horizontal"
-                  translate={{ x: 120, y: 300 }}
+                  translate={{ x: 200, y: 300 }}
                   pathFunc="step"
                   renderCustomNodeElement={renderCustomNodeElement}
                   separation={{ siblings: 0.8, nonSiblings: 1.2 }}
                   nodeSize={{ x: 200, y: 80 }}
                   zoom={0.8}
                   collapsible={false}
+                  enableLegacyTransitions={false}
+                  transitionDuration={0}
+                  scaleExtent={{ min: 0.3, max: 3 }}
                 />
               )}
             </div>

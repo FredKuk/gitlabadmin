@@ -1,5 +1,80 @@
 [
   {
+    "id": 14,
+    "web_url": "http://gitlab.example.com/groups/cma",
+    "name": "CMA",
+    "path": "cma",
+    "full_name": "CMA",
+    "full_path": "cma",
+    "created_at": "2025-08-15T11:28:03.226Z",
+    "parent_id": null
+  },
+  {
+    "id": 19,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc/mcc",
+    "name": "MCC",
+    "path": "mcc",
+    "full_name": "CMA / MEC MCC / MCC",
+    "full_path": "cma/mec-mcc/mcc",
+    "created_at": "2025-08-15T11:29:21.211Z",
+    "parent_id": 18
+  },
+  {
+    "id": 18,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc",
+    "name": "MEC MCC",
+    "path": "mec-mcc",
+    "full_name": "CMA / MEC MCC",
+    "full_path": "cma/mec-mcc",
+    "created_at": "2025-08-15T11:29:09.203Z",
+    "parent_id": 14
+  },
+  {
+    "id": 15,
+    "web_url": "http://gitlab.example.com/groups/cma/mia",
+    "name": "MIA",
+    "path": "mia",
+    "description": "",
+    "visibility": "private",
+    "share_with_group_lock": false,
+    "require_two_factor_authentication": false,
+    "two_factor_grace_period": 48,
+    "project_creation_level": "developer",
+    "auto_devops_enabled": null,
+    "subgroup_creation_level": "maintainer",
+    "emails_disabled": false,
+    "emails_enabled": true,
+    "mentions_disabled": null,
+    "lfs_enabled": true,
+    "math_rendering_limits_enabled": true,
+    "lock_math_rendering_limits_enabled": false,
+    "default_branch": null,
+    "default_branch_protection": 2,
+    "default_branch_protection_defaults": {
+      "allowed_to_push": [
+        {
+          "access_level": 40
+        }
+      ],
+      "allow_force_push": false,
+      "allowed_to_merge": [
+        {
+          "access_level": 40
+        }
+      ],
+      "developer_can_initial_push": false
+    },
+    "avatar_url": null,
+    "request_access_enabled": true,
+    "full_name": "CMA / MIA",
+    "full_path": "cma/mia",
+    "created_at": "2025-08-15T11:28:15.262Z",
+    "parent_id": 14,
+    "organization_id": 1,
+    "shared_runners_setting": "enabled",
+    "max_artifacts_size": null
+  },
+  {
     "id": 3,
     "web_url": "http://gitlab.example.com/groups/ppa/oqf",
     "name": "OQF",
@@ -20,6 +95,36 @@
     "parent_id": null
   },
   {
+    "id": 27,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc/mcc/slct01",
+    "name": "SLCT01",
+    "path": "slct01",
+    "full_name": "CMA / MEC MCC / MCC / SLCT01",
+    "full_path": "cma/mec-mcc/mcc/slct01",
+    "created_at": "2025-08-15T11:41:05.581Z",
+    "parent_id": 19
+  },
+  {
+    "id": 23,
+    "web_url": "http://gitlab.example.com/groups/cma/mia/alarm",
+    "name": "alarm",
+    "path": "alarm",
+    "full_name": "CMA / MIA / alarm",
+    "full_path": "cma/mia/alarm",
+    "created_at": "2025-08-15T11:30:11.149Z",
+    "parent_id": 15
+  },
+  {
+    "id": 34,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc/alarm",
+    "name": "alarm",
+    "path": "alarm",
+    "full_name": "CMA / MEC MCC / alarm",
+    "full_path": "cma/mec-mcc/alarm",
+    "created_at": "2025-08-15T11:42:27.846Z",
+    "parent_id": 18
+  },
+  {
     "id": 12,
     "web_url": "http://gitlab.example.com/groups/ppa/oqf/architect",
     "name": "architect",
@@ -28,6 +133,26 @@
     "full_path": "ppa/oqf/architect",
     "created_at": "2025-08-15T07:07:11.635Z",
     "parent_id": 3
+  },
+  {
+    "id": 25,
+    "web_url": "http://gitlab.example.com/groups/cma/mia/architect",
+    "name": "architect",
+    "path": "architect",
+    "full_name": "CMA / MIA / architect",
+    "full_path": "cma/mia/architect",
+    "created_at": "2025-08-15T11:30:26.438Z",
+    "parent_id": 15
+  },
+  {
+    "id": 31,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc/architect",
+    "name": "architect",
+    "path": "architect",
+    "full_name": "CMA / MEC MCC / architect",
+    "full_path": "cma/mec-mcc/architect",
+    "created_at": "2025-08-15T11:41:52.955Z",
+    "parent_id": 18
   },
   {
     "id": 7,
@@ -40,6 +165,26 @@
     "parent_id": 3
   },
   {
+    "id": 22,
+    "web_url": "http://gitlab.example.com/groups/cma/mia/developer",
+    "name": "developer",
+    "path": "developer",
+    "full_name": "CMA / MIA / developer",
+    "full_path": "cma/mia/developer",
+    "created_at": "2025-08-15T11:29:55.020Z",
+    "parent_id": 15
+  },
+  {
+    "id": 33,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc/developer",
+    "name": "developer",
+    "path": "developer",
+    "full_name": "CMA / MEC MCC / developer",
+    "full_path": "cma/mec-mcc/developer",
+    "created_at": "2025-08-15T11:42:21.506Z",
+    "parent_id": 18
+  },
+  {
     "id": 13,
     "web_url": "http://gitlab.example.com/groups/ppa/oqf/inspector",
     "name": "inspector",
@@ -48,5 +193,25 @@
     "full_path": "ppa/oqf/inspector",
     "created_at": "2025-08-15T07:07:19.477Z",
     "parent_id": 3
+  },
+  {
+    "id": 24,
+    "web_url": "http://gitlab.example.com/groups/cma/mia/inspector",
+    "name": "inspector",
+    "path": "inspector",
+    "full_name": "CMA / MIA / inspector",
+    "full_path": "cma/mia/inspector",
+    "created_at": "2025-08-15T11:30:17.817Z",
+    "parent_id": 15
+  },
+  {
+    "id": 35,
+    "web_url": "http://gitlab.example.com/groups/cma/mec-mcc/inspector",
+    "name": "inspector",
+    "path": "inspector",
+    "full_name": "CMA / MEC MCC / inspector",
+    "full_path": "cma/mec-mcc/inspector",
+    "created_at": "2025-08-15T11:42:45.356Z",
+    "parent_id": 18
   }
 ]

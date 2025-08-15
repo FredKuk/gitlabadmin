@@ -1,15 +1,16 @@
 .group-page {
-  width: 90vw;
-  height: 90vh;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 10px;
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 
   .tab-container {
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     background-color: #e9ecef;
     border-radius: 8px;
     overflow: hidden;
@@ -41,10 +42,11 @@
     flex: 1;
     background-color: white;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
+    min-height: 0; // flexbox에서 필수
   }
 
   .graph-view {
@@ -53,7 +55,7 @@
     flex-direction: column;
 
     .controls {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       padding: 10px;
       background-color: #f8f9fa;
       border-radius: 6px;
@@ -80,15 +82,41 @@
     .tree-container {
       flex: 1;
       position: relative;
-      min-height: 600px;
       border: 1px solid #e9ecef;
       border-radius: 6px;
       background-color: #fefefe;
+      overflow: auto;
+      min-height: 0; // flexbox에서 필수
 
       // D3 Tree 스타일 커스터마이징
       .rd3t-tree-container {
         width: 100% !important;
         height: 100% !important;
+        min-width: 100%;
+        min-height: 100%;
+
+        svg {
+          width: 100% !important;
+          height: 100% !important;
+          min-width: 100%;
+          min-height: 100%;
+          overflow: visible;
+          cursor: default !important;
+
+          // 모든 하위 요소의 드래그 비활성화
+          * {
+            pointer-events: none;
+          }
+
+          // 노드와 텍스트는 클릭 가능하게
+          .rd3t-node,
+          .rd3t-node *,
+          rect,
+          text {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+          }
+        }
       }
 
       .rd3t-node {
@@ -99,6 +127,31 @@
         stroke: #95a5a6;
         stroke-width: 2px;
         fill: none;
+        pointer-events: none;
+      }
+
+      // 스크롤바 커스터마이징
+      &::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 6px;
+
+        &:hover {
+          background: #a8a8a8;
+        }
+      }
+
+      &::-webkit-scrollbar-corner {
+        background: #f1f1f1;
       }
     }
   }
@@ -117,16 +170,56 @@
   }
 }
 
-// 반응형 디자인
+// 작은 화면에서의 반응형
 @media (max-width: 768px) {
   .group-page {
-    width: 95vw;
-    height: 95vh;
-    padding: 10px;
+    padding: 5px;
+
+    .tab-container {
+      margin-bottom: 5px;
+      
+      .tab {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+    }
+
+    .content-area {
+      padding: 10px;
+    }
 
     .graph-view {
+      .controls {
+        margin-bottom: 10px;
+        padding: 8px;
+      }
+
       .tree-container {
-        min-height: 400px;
+        &::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-height: 600px) {
+  .group-page {
+    .tab-container {
+      .tab {
+        padding: 8px 16px;
+      }
+    }
+
+    .content-area {
+      padding: 10px;
+    }
+
+    .graph-view {
+      .controls {
+        margin-bottom: 8px;
+        padding: 6px;
       }
     }
   }
