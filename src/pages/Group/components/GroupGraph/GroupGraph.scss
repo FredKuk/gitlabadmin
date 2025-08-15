@@ -1,0 +1,187 @@
+.group-graph {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  .graph-controls {
+    margin-bottom: 15px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    .control-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      .control-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+
+        &.expand-btn {
+          background-color: #28a745;
+          color: white;
+
+          &:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+          }
+        }
+
+        &.collapse-btn {
+          background-color: #dc3545;
+          color: white;
+
+          &:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+
+    .control-checkbox {
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 500;
+        color: #495057;
+        white-space: nowrap;
+
+        input[type="checkbox"] {
+          margin-right: 8px;
+          transform: scale(1.2);
+          cursor: pointer;
+        }
+
+        .checkmark {
+          margin-left: 4px;
+        }
+
+        &:hover {
+          color: #007bff;
+        }
+      }
+    }
+  }
+
+  .graph-container {
+    flex: 1;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    background-color: #fefefe;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+
+    // D3 트리 컨테이너 스타일링
+    .rd3t-tree-container {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .rd3t-svg {
+      background-color: #fefefe;
+    }
+
+    // 노드 호버 효과
+    .rd3t-node {
+      cursor: pointer;
+
+      rect {
+        transition: all 0.2s ease;
+      }
+
+      &:hover rect {
+        filter: brightness(1.1);
+        stroke-width: 3px;
+      }
+
+      text {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      circle {
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    // 링크 스타일링
+    .rd3t-link {
+      stroke: #6c757d;
+      stroke-width: 1.5px;
+      fill: none;
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 1366px) {
+  .group-graph {
+    .graph-controls {
+      padding: 10px;
+      gap: 15px;
+
+      .control-buttons {
+        gap: 8px;
+
+        .control-btn {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .group-graph {
+    .graph-controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 10px;
+
+      .control-buttons {
+        justify-content: center;
+
+        .control-btn {
+          padding: 8px 12px;
+          font-size: 13px;
+          flex: 1;
+          max-width: 120px;
+        }
+      }
+
+      .control-checkbox {
+        text-align: center;
+
+        .checkbox-container {
+          justify-content: center;
+        }
+      }
+    }
+  }
+}

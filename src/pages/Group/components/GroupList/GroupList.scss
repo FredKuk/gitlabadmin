@@ -1,0 +1,323 @@
+.group-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  .list-controls {
+    margin-bottom: 15px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .control-checkbox {
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 500;
+        color: #495057;
+        white-space: nowrap;
+
+        input[type="checkbox"] {
+          margin-right: 8px;
+          transform: scale(1.2);
+          cursor: pointer;
+        }
+
+        .checkmark {
+          margin-left: 4px;
+        }
+
+        &:hover {
+          color: #007bff;
+        }
+      }
+    }
+  }
+
+  .list-container {
+    flex: 1;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    background-color: #fefefe;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .list-header {
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      color: #495057;
+      flex-shrink: 0;
+    }
+
+    .list-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+
+      .list-item {
+        display: flex;
+        align-items: center;
+        height: 32px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s ease;
+        user-select: none;
+        padding: 4px 8px;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .list-item-content {
+          display: flex;
+          align-items: center;
+          flex: 1;
+          gap: 8px;
+
+          .expand-icon {
+            width: 12px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #495057;
+            cursor: pointer;
+            transition: color 0.2s ease;
+
+            &:hover {
+              color: #007bff;
+            }
+          }
+
+          .expand-icon-placeholder {
+            width: 12px;
+          }
+
+          .list-node {
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            height: 24px;
+            min-width: 80px;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+            &.project {
+              border: 1px solid #f39c12;
+            }
+
+            .node-text {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              padding: 0 8px;
+            }
+
+            // 특별 그룹 색상
+            &.architect {
+              background-color: #5d9cec !important;
+            }
+
+            &.inspector {
+              background-color: #e67e22 !important;
+            }
+
+            &.developer {
+              background-color: #27ae60 !important;
+            }
+
+            &.alarm {
+              background-color: #e74c3c !important;
+            }
+          }
+
+          .list-item-text {
+            flex: 1;
+            font-size: 14px;
+            color: #495057;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-left: 4px;
+          }
+
+          .list-detail-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+
+            &:hover {
+              transform: scale(1.1);
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            &.selected {
+              background-color: #28a745;
+            }
+
+            &:active {
+              transform: scale(0.95);
+            }
+          }
+        }
+
+        // 레벨별 노드 크기 조정
+        @for $i from 0 through 5 {
+          &.level-#{$i} .list-node {
+            width: #{200 - ($i * 15)}px;
+          }
+        }
+
+        // 더 깊은 레벨은 최소 크기 유지
+        @for $i from 6 through 10 {
+          &.level-#{$i} .list-node {
+            width: 80px;
+          }
+        }
+      }
+
+      // 스크롤바 커스터마이징
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+
+        &:hover {
+          background: #a8a8a8;
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 1366px) {
+  .group-list {
+    .list-controls {
+      padding: 10px;
+    }
+
+    .list-container {
+      .list-header {
+        font-size: 15px;
+        padding: 10px;
+      }
+
+      .list-content {
+        .list-item {
+          .list-item-content {
+            .list-item-text {
+              font-size: 13px;
+            }
+
+            .list-node {
+              font-size: 11px;
+              height: 22px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .group-list {
+    .list-controls {
+      padding: 8px;
+      text-align: center;
+    }
+
+    .list-container {
+      .list-header {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      .list-content {
+        .list-item {
+          height: 28px;
+
+          .list-item-content {
+            gap: 6px;
+
+            .expand-icon {
+              width: 10px;
+              font-size: 9px;
+            }
+
+            .expand-icon-placeholder {
+              width: 10px;
+            }
+
+            .list-item-text {
+              font-size: 12px;
+            }
+
+            .list-node {
+              font-size: 10px;
+              height: 20px;
+              min-width: 60px;
+            }
+
+            .list-detail-btn {
+              width: 18px;
+              height: 18px;
+              font-size: 9px;
+            }
+          }
+
+          // 모바일에서 레벨별 노드 크기 조정
+          @for $i from 0 through 5 {
+            &.level-#{$i} .list-node {
+              width: #{150 - ($i * 12)}px;
+            }
+          }
+
+          @for $i from 6 through 10 {
+            &.level-#{$i} .list-node {
+              width: 60px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
