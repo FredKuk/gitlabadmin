@@ -27,6 +27,7 @@ export const GroupPage: React.FC = () => {
     new Set()
   );
   const [showFullTree, setShowFullTree] = useState(false);
+  const [showPermissionGroups, setShowPermissionGroups] = useState(false); // 권한그룹보기
 
   useEffect(() => {
     const loadData = () => {
@@ -45,16 +46,28 @@ export const GroupPage: React.FC = () => {
     if (groups.length > 0) {
       buildTree(groups, projects);
     }
-  }, [expandedNodes, expandedProjects, showFullTree, groups, projects]);
+  }, [
+    expandedNodes,
+    expandedProjects,
+    showFullTree,
+    showPermissionGroups,
+    groups,
+    projects,
+  ]);
+
+  // 권한그룹인지 확인하는 함수
+  const isPermissionGroup = (groupName: string): boolean => {
+    const name = groupName.includes("/")
+      ? groupName.split("/").pop() || groupName
+      : groupName;
+    return ["alarm", "architect", "developer", "inspector"].includes(
+      name.toLowerCase()
+    );
+  };
 
   const buildTree = (groupsData: Group[], projectsData: Project[]) => {
     // parent_id가 null인 최상위 그룹들 찾기
     const rootGroups = groupsData.filter((group) => group.parent_id === null);
-    console.log(
-      "Root groups found:",
-      rootGroups.length,
-      rootGroups.map((g) => g.name)
-    );
 
     const buildChildren = (groupId: number): D3TreeNode[] => {
       // showFullTree가 false이고 expandedNodes에 없으면 children 반환하지 않음
@@ -68,7 +81,13 @@ export const GroupPage: React.FC = () => {
       const childGroups = groupsData.filter(
         (group) => group.parent_id === groupId
       );
+
       childGroups.forEach((group) => {
+        // 권한그룹 필터링: showPermissionGroups가 false이면 권한그룹 제외
+        if (!showPermissionGroups && isPermissionGroup(group.name)) {
+          return;
+        }
+
         children.push({
           name: group.name,
           attributes: {
@@ -94,6 +113,14 @@ export const GroupPage: React.FC = () => {
           (showFullTree || expandedProjects.has(project.id))
         ) {
           project.shared_with_groups.forEach((sharedGroup, index) => {
+            // 권한그룹 필터링: showPermissionGroups가 false이면 권한그룹 제외
+            if (
+              !showPermissionGroups &&
+              isPermissionGroup(sharedGroup.group_full_path)
+            ) {
+              return;
+            }
+
             projectChildren.push({
               name: sharedGroup.group_full_path,
               attributes: {
@@ -170,6 +197,44 @@ export const GroupPage: React.FC = () => {
     }
 
     setTreeData(tree);
+  };
+
+  // 전체 트리 펼치기
+  const expandAllNodes = () => {
+    const allGroupIds = new Set<number>();
+    const allProjectIds = new Set<number>();
+
+    const collectIds = (nodes: D3TreeNode[]) => {
+      nodes.forEach((node) => {
+        if (
+          node.attributes?.type === "group" &&
+          !node.attributes?.isVirtualRoot
+        ) {
+          allGroupIds.add(node.attributes.id);
+        }
+        if (node.attributes?.type === "project") {
+          allProjectIds.add(node.attributes.id);
+        }
+        if (node.children) {
+          collectIds(node.children);
+        }
+      });
+    };
+
+    // 모든 그룹과 프로젝트 ID 수집
+    groups.forEach((group) => allGroupIds.add(group.id));
+    projects.forEach((project) => allProjectIds.add(project.id));
+
+    setExpandedNodes(allGroupIds);
+    setExpandedProjects(allProjectIds);
+    setShowFullTree(true);
+  };
+
+  // 전체 트리 접기
+  const collapseAllNodes = () => {
+    setExpandedNodes(new Set([-999])); // 가상 루트만 유지
+    setExpandedProjects(new Set());
+    setShowFullTree(false);
   };
 
   const handleNodeClick = (nodeData: any) => {
@@ -287,12 +352,12 @@ export const GroupPage: React.FC = () => {
       <g>
         <rect
           width="160"
-          height="40"
+          height="28" // 40에서 28로 줄임 (높이 감소)
           x="-80"
-          y="-20"
+          y="-14" // -20에서 -14로 조정 (중앙 정렬 유지)
           fill={nodeColor}
-          rx="8"
-          ry="8"
+          rx="6" // 8에서 6으로 줄임 (모서리 둥글기)
+          ry="6"
           stroke={
             needsBorder
               ? nodeType === "project"
@@ -300,9 +365,9 @@ export const GroupPage: React.FC = () => {
                 : "#34495e"
               : "#fff"
           }
-          strokeWidth={needsBorder ? "3" : "2"}
+          strokeWidth={needsBorder ? "2" : "1"} // 3에서 2로, 2에서 1로 줄임
           strokeDasharray={
-            needsBorder && nodeType === "project" ? "5,5" : "none"
+            needsBorder && nodeType === "project" ? "4,4" : "none" // 5,5에서 4,4로
           }
           style={{ cursor: "pointer" }}
           onClick={() => handleNodeClick(nodeDatum)}
@@ -311,10 +376,10 @@ export const GroupPage: React.FC = () => {
           fill="white"
           strokeWidth="0"
           x="0"
-          y="5"
+          y="3" // 5에서 3으로 조정 (낮은 높이에 맞춰)
           textAnchor="middle"
           style={{
-            font: "bold 11px sans-serif",
+            font: "bold 10px sans-serif", // 11px에서 10px로 줄임
             cursor: "pointer",
           }}
           onClick={() => handleNodeClick(nodeDatum)}
@@ -328,10 +393,10 @@ export const GroupPage: React.FC = () => {
               fill="white"
               strokeWidth="0"
               x="65"
-              y="-10"
+              y="-8" // -10에서 -8로 조정
               textAnchor="middle"
               style={{
-                font: "bold 14px sans-serif",
+                font: "bold 12px sans-serif", // 14px에서 12px로 줄임
                 cursor: "pointer",
               }}
               onClick={() => handleNodeClick(nodeDatum)}
@@ -364,26 +429,43 @@ export const GroupPage: React.FC = () => {
         {activeTab === "GRAPH" ? (
           <div className="graph-view">
             <div className="controls">
-              <label className="checkbox-container">
-                <input
-                  type="checkbox"
-                  checked={showFullTree}
-                  onChange={(e) => setShowFullTree(e.target.checked)}
-                />
-                <span className="checkmark"></span>
-                전체 트리 보기
-              </label>
+              <div className="control-buttons">
+                <button
+                  className="control-btn expand-btn"
+                  onClick={expandAllNodes}
+                >
+                  전체 트리 보기
+                </button>
+                <button
+                  className="control-btn collapse-btn"
+                  onClick={collapseAllNodes}
+                >
+                  전체 트리 접기
+                </button>
+              </div>
+
+              <div className="control-checkbox">
+                <label className="checkbox-container">
+                  <input
+                    type="checkbox"
+                    checked={showPermissionGroups}
+                    onChange={(e) => setShowPermissionGroups(e.target.checked)}
+                  />
+                  <span className="checkmark"></span>
+                  권한그룹보기
+                </label>
+              </div>
             </div>
             <div className="tree-container">
               {treeData.length > 0 && (
                 <Tree
                   data={treeData}
                   orientation="horizontal"
-                  translate={{ x: 200, y: 300 }}
+                  translate={{ x: 100, y: 50 }}
                   pathFunc="step"
                   renderCustomNodeElement={renderCustomNodeElement}
-                  separation={{ siblings: 0.8, nonSiblings: 1.2 }}
-                  nodeSize={{ x: 200, y: 80 }}
+                  separation={{ siblings: 0.6, nonSiblings: 0.9 }} // 0.5, 0.8에서 살짝 증가
+                  nodeSize={{ x: 200, y: 65 }} // 60에서 65로 5만큼 증가
                   zoom={0.8}
                   collapsible={false}
                   enableLegacyTransitions={false}
