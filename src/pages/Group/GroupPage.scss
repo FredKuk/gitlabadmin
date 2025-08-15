@@ -304,13 +304,1327 @@
   .list-view {
     height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    min-height: 0;
 
-    .placeholder {
-      text-align: center;
-      color: #6c757d;
-      font-size: 18px;
+    .list-controls {
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 20px;
+
+      .control-checkbox {
+        .checkbox-container {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          font-weight: 500;
+          color: #495057;
+          white-space: nowrap;
+
+          input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+          }
+
+          .checkmark {
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+
+    .list-main-content {
+      flex: 1;
+      display: flex;
+      gap: 15px;
+      min-height: 0;
+      transition: all 0.3s ease;
+      height: calc(100% - 75px);
+
+      &.with-side-panel {
+        .list-container {
+          width: 70%;
+          flex: none;
+        }
+      }
+
+      .list-container {
+        flex: 1;
+        width: 100%;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: #fefefe;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        .list-header {
+          background-color: #f8f9fa;
+          border-bottom: 2px solid #dee2e6;
+          padding: 12px;
+          text-align: center;
+          font-weight: 600;
+          font-size: 16px;
+          color: #495057;
+          flex-shrink: 0;
+        }
+
+        .list-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 8px 0;
+
+          .list-item {
+            padding: 4px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+            user-select: none;
+
+            &:hover {
+              background-color: #f8f9fa;
+            }
+
+            &.group {
+              .list-item-content {
+                .expand-icon {
+                  color: #495057;
+                  font-size: 10px;
+                  font-weight: bold;
+                }
+              }
+            }
+
+            &.project {
+              .list-item-content {
+                .list-node {
+                  border: 1px solid #f39c12 !important;
+                  background-color: #f1c40f !important;
+                }
+              }
+            }
+
+            .list-item-content {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .expand-icon {
+                width: 12px;
+                text-align: center;
+                font-size: 10px;
+                color: #6c757d;
+                cursor: pointer;
+              }
+
+              .list-node {
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                height: 24px;
+                min-width: 80px;
+                max-width: 200px;
+                transition: width 0.3s ease;
+
+                &.group {
+                  background-color: #2c3e50;
+                }
+
+                &.project {
+                  background-color: #f1c40f;
+                  border: 1px solid #f39c12;
+                }
+              }
+
+              .list-item-text {
+                flex: 1;
+                font-size: 14px;
+                color: #495057;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              .list-detail-btn {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: none;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  transform: scale(1.1);
+                }
+
+                &.selected {
+                  background-color: #28a745 !important;
+                }
+              }
+            }
+
+            // 레벨별 스타일링
+            &.level-0 .list-node {
+              width: 200px;
+            }
+
+            &.level-1 .list-node {
+              width: 185px;
+            }
+
+            &.level-2 .list-node {
+              width: 170px;
+            }
+
+            &.level-3 .list-node {
+              width: 155px;
+            }
+
+            &.level-4 .list-node {
+              width: 140px;
+            }
+
+            &.level-5 .list-node {
+              width: 125px;
+            }
+
+            // 더 깊은 레벨은 최소 크기 유지
+            @for $i from 6 through 10 {
+              &.level-#{$i} .list-node {
+                width: 80px;
+              }
+            }
+          }
+
+          // 스크롤바 커스터마이징
+          &::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+
+            &:hover {
+              background: #a8a8a8;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .list-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .list-controls {
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 20px;
+
+      .control-checkbox {
+        .checkbox-container {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          font-weight: 500;
+          color: #495057;
+          white-space: nowrap;
+
+          input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+          }
+
+          .checkmark {
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+
+    .list-main-content {
+      flex: 1;
+      display: flex;
+      gap: 15px;
+      min-height: 0;
+      transition: all 0.3s ease;
+      height: calc(100% - 75px);
+
+      &.with-side-panel {
+        .list-container {
+          width: 70%;
+          flex: none;
+        }
+      }
+
+      .list-container {
+        flex: 1;
+        width: 100%;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: #fefefe;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        .list-header {
+          background-color: #f8f9fa;
+          border-bottom: 2px solid #dee2e6;
+          padding: 12px;
+          text-align: center;
+          font-weight: 600;
+          font-size: 16px;
+          color: #495057;
+          flex-shrink: 0;
+        }
+
+        .list-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 8px 0;
+
+          .list-item {
+            padding: 4px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+            user-select: none;
+
+            &:hover {
+              background-color: #f8f9fa;
+            }
+
+            &.group {
+              .list-item-content {
+                .expand-icon {
+                  color: #495057;
+                  font-size: 10px;
+                  font-weight: bold;
+                }
+              }
+            }
+
+            &.project {
+              .list-item-content {
+                .list-node {
+                  border: 1px solid #f39c12 !important;
+                  background-color: #f1c40f !important;
+                }
+              }
+            }
+
+            .list-item-content {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .expand-icon {
+                width: 12px;
+                text-align: center;
+                font-size: 10px;
+                color: #6c757d;
+                cursor: pointer;
+              }
+
+              .list-node {
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                height: 24px;
+                min-width: 80px;
+                max-width: 200px;
+                transition: width 0.3s ease;
+
+                &.group {
+                  background-color: #2c3e50;
+                }
+
+                &.project {
+                  background-color: #f1c40f;
+                  border: 1px solid #f39c12;
+                }
+              }
+
+              .list-item-text {
+                flex: 1;
+                font-size: 14px;
+                color: #495057;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              .list-detail-btn {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: none;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  transform: scale(1.1);
+                }
+
+                &.selected {
+                  background-color: #28a745 !important;
+                }
+              }
+            }
+
+            // 레벨별 스타일링
+            &.level-0 .list-node {
+              width: 200px;
+            }
+
+            &.level-1 .list-node {
+              width: 185px;
+            }
+
+            &.level-2 .list-node {
+              width: 170px;
+            }
+
+            &.level-3 .list-node {
+              width: 155px;
+            }
+
+            &.level-4 .list-node {
+              width: 140px;
+            }
+
+            &.level-5 .list-node {
+              width: 125px;
+            }
+
+            // 더 깊은 레벨은 최소 크기 유지
+            @for $i from 6 through 10 {
+              &.level-#{$i} .list-node {
+                width: 80px;
+              }
+            }
+          }
+
+          // 스크롤바 커스터마이징
+          &::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+
+            &:hover {
+              background: #a8a8a8;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .list-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .list-controls {
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 20px;
+
+      .control-checkbox {
+        .checkbox-container {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          font-weight: 500;
+          color: #495057;
+          white-space: nowrap;
+
+          input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+          }
+
+          .checkmark {
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+
+    .list-main-content {
+      flex: 1;
+      display: flex;
+      gap: 15px;
+      min-height: 0;
+      transition: all 0.3s ease;
+      height: calc(100% - 75px);
+
+      &.with-side-panel {
+        .list-container {
+          width: 70%;
+          flex: none;
+        }
+      }
+
+      .list-container {
+        flex: 1;
+        width: 100%;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: #fefefe;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        .list-header {
+          background-color: #f8f9fa;
+          border-bottom: 2px solid #dee2e6;
+          padding: 12px;
+          text-align: center;
+          font-weight: 600;
+          font-size: 16px;
+          color: #495057;
+          flex-shrink: 0;
+        }
+
+        .list-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 8px 0;
+
+          .list-item {
+            padding: 4px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+            user-select: none;
+
+            &:hover {
+              background-color: #f8f9fa;
+            }
+
+            &.group {
+              .list-item-content {
+                .expand-icon {
+                  color: #495057;
+                  font-size: 10px;
+                  font-weight: bold;
+                }
+              }
+            }
+
+            &.project {
+              .list-item-content {
+                .list-node {
+                  border: 1px solid #f39c12 !important;
+                  background-color: #f1c40f !important;
+                }
+              }
+            }
+
+            .list-item-content {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .expand-icon {
+                width: 12px;
+                text-align: center;
+                font-size: 10px;
+                color: #6c757d;
+                cursor: pointer;
+              }
+
+              .list-node {
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                height: 24px;
+                min-width: 80px;
+                max-width: 200px;
+                transition: width 0.3s ease;
+
+                &.group {
+                  background-color: #2c3e50;
+                }
+
+                &.project {
+                  background-color: #f1c40f;
+                  border: 1px solid #f39c12;
+                }
+              }
+
+              .list-item-text {
+                flex: 1;
+                font-size: 14px;
+                color: #495057;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              .list-detail-btn {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: none;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  transform: scale(1.1);
+                }
+
+                &.selected {
+                  background-color: #28a745 !important;
+                }
+              }
+            }
+
+            // 레벨별 스타일링
+            &.level-0 .list-node {
+              width: 200px;
+            }
+
+            &.level-1 .list-node {
+              width: 185px;
+            }
+
+            &.level-2 .list-node {
+              width: 170px;
+            }
+
+            &.level-3 .list-node {
+              width: 155px;
+            }
+
+            &.level-4 .list-node {
+              width: 140px;
+            }
+
+            &.level-5 .list-node {
+              width: 125px;
+            }
+
+            // 더 깊은 레벨은 최소 크기 유지
+            @for $i from 6 through 10 {
+              &.level-#{$i} .list-node {
+                width: 80px;
+              }
+            }
+          }
+
+          // 스크롤바 커스터마이징
+          &::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+
+            &:hover {
+              background: #a8a8a8;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 특별 그룹 색상 (리스트 뷰에도 적용)
+  .list-item {
+    .list-node {
+      &.architect {
+        background-color: #5d9cec !important;
+      }
+
+      &.inspector {
+        background-color: #e67e22 !important;
+      }
+
+      &.developer {
+        background-color: #27ae60 !important;
+      }
+
+      &.alarm {
+        background-color: #e74c3c !important;
+      }
+    }
+  }
+
+  // 모바일에서 리스트 뷰 조정
+  @media (max-width: 768px) {
+    .list-view {
+      .list-main-content {
+        &.with-side-panel {
+          flex-direction: column !important;
+          gap: 10px !important;
+
+          .list-container {
+            width: 100% !important;
+            height: 60% !important;
+          }
+
+          .side-panel {
+            width: 100% !important;
+            height: 40% !important;
+          }
+        }
+      }
+
+      .list-item {
+        .list-item-content {
+          .list-item-text {
+            font-size: 12px !important;
+          }
+
+          .list-node {
+            font-size: 10px !important;
+            height: 20px !important;
+          }
+        }
+      }
+    }
+  }
+
+  // 매우 큰 높이 (1200px 이상)
+  @media (min-height: 1200px) {
+    .group-page {
+      height: 100vh; // 충분히 크면 100%
+    }
+  }
+
+  // 큰 높이 (1080px ~ 1199px)
+  @media (min-height: 1080px) and (max-height: 1199px) {
+    .group-page {
+      height: 98vh; // 98%로 살짝 줄임
+    }
+  }
+
+  // 일반 높이 (900px ~ 1079px)
+  @media (min-height: 900px) and (max-height: 1079px) {
+    .group-page {
+      height: 95vh; // 95%로 줄임
+    }
+  }
+
+  // 중간 높이 (800px ~ 899px)
+  @media (min-height: 800px) and (max-height: 899px) {
+    .group-page {
+      height: 92vh; // 92%로 줄임
+    }
+  }
+
+  // 작은 높이 (700px ~ 799px)
+  @media (min-height: 700px) and (max-height: 799px) {
+    .group-page {
+      height: 88vh; // 88%로 줄임
+    }
+  }
+
+  // 더 작은 높이 (600px ~ 699px)
+  @media (min-height: 600px) and (max-height: 699px) {
+    .group-page {
+      height: 85vh; // 85%로 줄임
+    }
+  }
+
+  // 작은 높이 (500px ~ 599px)
+  @media (min-height: 500px) and (max-height: 599px) {
+    .group-page {
+      height: 80vh; // 80%로 줄임
+    }
+  }
+
+  // 매우 작은 높이 (400px ~ 499px)
+  @media (min-height: 400px) and (max-height: 499px) {
+    .group-page {
+      height: 75vh; // 75%로 줄임
+    }
+  }
+
+  // 극소 높이 (300px ~ 399px)
+  @media (min-height: 300px) and (max-height: 399px) {
+    .group-page {
+      height: 70vh; // 70%로 줄임
+    }
+  }
+
+  // 최소 높이 (299px 이하)
+  @media (max-height: 299px) {
+    .group-page {
+      height: 65vh; // 65%로 최소화
+    }
+  }
+
+  // 대형 화면 (1920px 이상)
+  @media (min-width: 1920px) {
+    .group-page {
+      .tab-container {
+        margin: 15px;
+        height: 60px;
+
+        .tab {
+          padding: 16px 32px;
+          font-size: 18px;
+        }
+      }
+
+      .content-area {
+        margin: 0 15px 15px 15px;
+        padding: 20px;
+        height: calc(100vh - 135px);
+      }
+
+      .controls {
+        padding: 15px !important;
+        margin-bottom: 20px !important;
+        min-height: 55px !important;
+      }
+
+      .main-content {
+        gap: 20px !important;
+        height: calc(100% - 95px) !important;
+      }
+    }
+  }
+
+  // 중간 화면 (1366px ~ 1919px)
+  @media (min-width: 1366px) and (max-width: 1919px) {
+    .group-page {
+      .content-area {
+        padding: 12px;
+        height: calc(100vh - 102px);
+      }
+
+      .controls {
+        padding: 10px !important;
+        margin-bottom: 12px !important;
+        min-height: 42px !important;
+      }
+
+      .main-content {
+        gap: 12px !important;
+        height: calc(100% - 69px) !important;
+      }
+    }
+  }
+
+  // 작은 화면 (768px ~ 1365px)
+  @media (min-width: 769px) and (max-width: 1365px) {
+    .group-page {
+      .tab-container {
+        margin: 8px;
+        height: 45px;
+
+        .tab {
+          padding: 10px 20px;
+          font-size: 15px;
+        }
+      }
+
+      .content-area {
+        margin: 0 8px 8px 8px;
+        padding: 10px;
+        height: calc(100vh - 98px);
+      }
+
+      .controls {
+        padding: 8px !important;
+        margin-bottom: 10px !important;
+        min-height: 40px !important;
+
+        .control-btn {
+          padding: 6px 12px !important;
+          font-size: 13px !important;
+        }
+      }
+
+      .main-content {
+        gap: 10px !important;
+        height: calc(100% - 65px) !important;
+      }
+    }
+  }
+
+  // 모바일 화면 (768px 이하)
+  @media (max-width: 768px) {
+    .group-page {
+      .tab-container {
+        margin: 5px;
+        height: 40px;
+
+        .tab {
+          padding: 8px 16px;
+          font-size: 14px;
+        }
+      }
+
+      .content-area {
+        margin: 0 5px 5px 5px;
+        padding: 8px;
+        height: calc(100vh - 85px);
+      }
+
+      .controls {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 10px !important;
+        margin-bottom: 10px !important;
+        min-height: 80px !important;
+
+        .control-buttons {
+          justify-content: center;
+
+          .control-btn {
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+          }
+        }
+
+        .control-checkbox {
+          text-align: center;
+        }
+      }
+
+      .main-content {
+        height: calc(100% - 105px) !important;
+
+        &.with-side-panel {
+          flex-direction: column !important;
+          gap: 10px !important;
+
+          .tree-container {
+            width: 100% !important;
+            height: 55% !important;
+          }
+
+          .side-panel {
+            width: 100% !important;
+            height: 45% !important;
+          }
+        }
+      }
+    }
+  }
+
+  // 매우 작은 높이 화면 (600px 이하)
+  @media (max-height: 600px) {
+    .group-page {
+      .tab-container {
+        margin: 3px;
+        height: 35px;
+
+        .tab {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+
+      .content-area {
+        margin: 0 3px 3px 3px;
+        padding: 5px;
+        height: calc(100vh - 70px);
+      }
+
+      .controls {
+        margin-bottom: 5px !important;
+        padding: 5px !important;
+        min-height: 35px !important;
+      }
+
+      .main-content {
+        height: calc(100% - 50px) !important;
+      }
+    }
+  }
+
+  // 기존 스타일들 유지하고 아래 내용 추가
+
+  .list-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .list-controls {
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 20px;
+
+      .control-checkbox {
+        .checkbox-container {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          font-weight: 500;
+          color: #495057;
+          white-space: nowrap;
+
+          input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+          }
+
+          .checkmark {
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+
+    .list-main-content {
+      flex: 1;
+      display: flex;
+      gap: 15px;
+      min-height: 0;
+      transition: all 0.3s ease;
+      height: calc(100% - 75px);
+
+      &.with-side-panel {
+        .list-container {
+          width: 70%;
+          flex: none;
+        }
+      }
+
+      .list-container {
+        flex: 1;
+        width: 100%;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: #fefefe;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        .list-header {
+          background-color: #f8f9fa;
+          border-bottom: 2px solid #dee2e6;
+          padding: 12px;
+          text-align: center;
+          font-weight: 600;
+          font-size: 16px;
+          color: #495057;
+          flex-shrink: 0;
+        }
+
+        .list-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 8px 0;
+
+          .list-item {
+            padding: 4px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+            user-select: none;
+
+            &:hover {
+              background-color: #f8f9fa;
+            }
+
+            &.group {
+              .list-item-content {
+                .expand-icon {
+                  color: #495057;
+                  font-size: 10px;
+                  font-weight: bold;
+                }
+              }
+            }
+
+            &.project {
+              .list-item-content {
+                .list-node {
+                  border: 1px solid #f39c12 !important;
+                  background-color: #f1c40f !important;
+                }
+              }
+            }
+
+            .list-item-content {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .expand-icon {
+                width: 12px;
+                text-align: center;
+                font-size: 10px;
+                color: #6c757d;
+                cursor: pointer;
+              }
+
+              .list-node {
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                height: 24px;
+                min-width: 80px;
+                max-width: 200px;
+                transition: width 0.3s ease;
+
+                &.group {
+                  background-color: #2c3e50;
+                }
+
+                &.project {
+                  background-color: #f1c40f;
+                  border: 1px solid #f39c12;
+                }
+              }
+
+              .list-item-text {
+                flex: 1;
+                font-size: 14px;
+                color: #495057;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              .list-detail-btn {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: none;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  transform: scale(1.1);
+                }
+
+                &.selected {
+                  background-color: #28a745 !important;
+                }
+              }
+            }
+
+            // 레벨별 스타일링
+            &.level-0 .list-node {
+              width: 200px;
+            }
+
+            &.level-1 .list-node {
+              width: 185px;
+            }
+
+            &.level-2 .list-node {
+              width: 170px;
+            }
+
+            &.level-3 .list-node {
+              width: 155px;
+            }
+
+            &.level-4 .list-node {
+              width: 140px;
+            }
+
+            &.level-5 .list-node {
+              width: 125px;
+            }
+
+            // 더 깊은 레벨은 최소 크기 유지
+            @for $i from 6 through 10 {
+              &.level-#{$i} .list-node {
+                width: 80px;
+              }
+            }
+          }
+
+          // 스크롤바 커스터마이징
+          &::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+
+            &:hover {
+              background: #a8a8a8;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 특별 그룹 색상 (리스트 뷰에도 적용)
+  .list-item {
+    .list-node {
+      &.architect {
+        background-color: #5d9cec !important;
+      }
+
+      &.inspector {
+        background-color: #e67e22 !important;
+      }
+
+      &.developer {
+        background-color: #27ae60 !important;
+      }
+
+      &.alarm {
+        background-color: #e74c3c !important;
+      }
+    }
+  }
+
+  // 모바일에서 리스트 뷰 조정
+  @media (max-width: 768px) {
+    .list-view {
+      .list-main-content {
+        &.with-side-panel {
+          flex-direction: column !important;
+          gap: 10px !important;
+
+          .list-container {
+            width: 100% !important;
+            height: 60% !important;
+          }
+
+          .side-panel {
+            width: 100% !important;
+            height: 40% !important;
+          }
+        }
+      }
+
+      .list-item {
+        .list-item-content {
+          .list-item-text {
+            font-size: 12px !important;
+          }
+
+          .list-node {
+            font-size: 10px !important;
+            height: 20px !important;
+          }
+        }
+      }
+    }
+  }
+
+  // 기존 group-editable-cell 스타일 유지
+  .group-editable-cell {
+    &.invalid {
+      background-color: #fee !important;
+      color: #e74c3c !important;
+      border-color: #e74c3c !important;
+    }
+
+    &.modified {
+      background-color: #e8f5e8 !important;
+      border-color: #28a745 !important;
+    }
+
+    &:hover {
+      background-color: #f8f9fa !important;
+    }
+  }
+
+  .side-panel-content {
+    .info-item {
+      margin-bottom: 15px !important;
+
+      label {
+        margin-bottom: 8px !important;
+      }
     }
   }
 }
