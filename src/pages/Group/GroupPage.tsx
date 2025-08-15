@@ -76,7 +76,7 @@ export const GroupPage: React.FC = () => {
       );
       childProjects.forEach((project) => {
         const projectNode: D3TreeNode = {
-          name: project.name, // 프로젝트는 name만 표시 (name_with_namespace 대신)
+          name: project.name, // 프로젝트는 name만 표시
           attributes: {
             id: project.id,
             type: "project",
@@ -92,7 +92,7 @@ export const GroupPage: React.FC = () => {
         ) {
           projectNode.children = project.shared_with_groups.map(
             (sharedGroup, index) => ({
-              name: sharedGroup.group_name, // group_full_path 대신 group_name만
+              name: sharedGroup.group_full_path, // group_full_path로 표현
               attributes: {
                 id: -index - 1,
                 type: "group" as const,
@@ -139,7 +139,10 @@ export const GroupPage: React.FC = () => {
       return "#f1c40f"; // 노란색
     }
 
-    switch (nodeName.toLowerCase()) {
+    // shared_with_groups의 경우 full_path에서 마지막 부분만 추출
+    const groupName = nodeName.includes('/') ? nodeName.split('/').pop() || nodeName : nodeName;
+    
+    switch (groupName.toLowerCase()) {
       case "architect":
         return "#5d9cec"; // 파란색
       case "inspector":
@@ -159,12 +162,17 @@ export const GroupPage: React.FC = () => {
     const hasChildren = nodeDatum.children && nodeDatum.children.length > 0;
     const isExpanded = expandedNodes.has(nodeDatum.attributes?.id);
 
+    // 긴 텍스트 처리
+    const displayName = nodeDatum.name.length > 15
+      ? `${nodeDatum.name.substring(0, 15)}...`
+      : nodeDatum.name;
+
     return (
       <g>
         <rect
-          width="120"
+          width="160" // 폭을 늘려서 긴 텍스트 수용
           height="40"
-          x="-60"
+          x="-80"
           y="-20"
           fill={nodeColor}
           rx="8"
@@ -181,20 +189,18 @@ export const GroupPage: React.FC = () => {
           y="5"
           textAnchor="middle"
           style={{
-            font: "bold 12px sans-serif",
+            font: "bold 11px sans-serif", // 폰트 크기를 약간 줄임
             cursor: "pointer",
           }}
           onClick={() => handleNodeClick(nodeDatum)}
         >
-          {nodeDatum.name.length > 12
-            ? `${nodeDatum.name.substring(0, 12)}...`
-            : nodeDatum.name}
+          {displayName}
         </text>
         {hasChildren && !showFullTree && (
           <text
             fill="white"
             strokeWidth="0"
-            x="45"
+            x="65" // 위치 조정
             y="-10"
             textAnchor="middle"
             style={{
@@ -246,11 +252,11 @@ export const GroupPage: React.FC = () => {
                 <Tree
                   data={treeData}
                   orientation="horizontal"
-                  translate={{ x: 100, y: 300 }}
+                  translate={{ x: 120, y: 300 }} // x 시작점을 더 오른쪽으로
                   pathFunc="step"
                   renderCustomNodeElement={renderCustomNodeElement}
-                  separation={{ siblings: 1.5, nonSiblings: 2 }}
-                  nodeSize={{ x: 80, y: 150 }}
+                  separation={{ siblings: 0.8, nonSiblings: 1.2 }} // 세로 간격 줄임
+                  nodeSize={{ x: 200, y: 80 }} // 가로 간격 늘림, 세로 간격 줄임
                   zoom={0.8}
                   collapsible={false}
                 />
