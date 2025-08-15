@@ -537,15 +537,12 @@ export const GroupPage: React.FC = () => {
                       <span>{selectedGroup.full_path}</span>
                     </div>
                     <div className="info-item">
-                      <label>ID:</label>
-                      <span>{selectedGroup.id}</span>
+                      <label>부서명:</label>
+                      <span>임시</span>
                     </div>
                     <div className="info-item">
-                      <label>설명:</label>
-                      <span>
-                        {(selectedGroup as any).description ||
-                          "설명이 없습니다."}
-                      </span>
+                      <label>팀명:</label>
+                      <span>임시</span>
                     </div>
                     <div className="info-item">
                       <label>생성일:</label>
@@ -556,10 +553,8 @@ export const GroupPage: React.FC = () => {
                       </span>
                     </div>
                     <div className="info-item">
-                      <label>가시성:</label>
-                      <span>
-                        {(selectedGroup as any).visibility || "설정되지 않음"}
-                      </span>
+                      <label>ID:</label>
+                      <span>{selectedGroup.id}</span>
                     </div>
                     {selectedGroup.parent_id && (
                       <div className="info-item">
