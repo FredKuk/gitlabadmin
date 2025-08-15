@@ -11,6 +11,7 @@ interface D3TreeNode {
     id: number;
     type: "group" | "project";
     full_path?: string;
+    isSharedGroup?: boolean;
   };
   children?: D3TreeNode[];
 }
@@ -21,6 +22,9 @@ export const GroupPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"GRAPH" | "LIST">("GRAPH");
   const [treeData, setTreeData] = useState<D3TreeNode[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
+  const [expandedProjects, setExpandedProjects] = useState<Set<number>>(
+    new Set()
+  );
   const [showFullTree, setShowFullTree] = useState(false);
 
   useEffect(() => {
@@ -40,7 +44,7 @@ export const GroupPage: React.FC = () => {
     if (groups.length > 0) {
       buildTree(groups, projects);
     }
-  }, [expandedNodes, showFullTree, groups, projects]);
+  }, [expandedNodes, expandedProjects, showFullTree, groups, projects]);
 
   const buildTree = (groupsData: Group[], projectsData: Project[]) => {
     // parent_id가 null인 최상위 그룹들만 (PPA만 보여야 함)
@@ -71,10 +75,31 @@ export const GroupPage: React.FC = () => {
       });
 
       // 해당 그룹에 속한 프로젝트들 (namespace.id로 찾기)
-      const childProjects = projectsData.filter((project) =>
-        project.namespace.id === groupId
+      const childProjects = projectsData.filter(
+        (project) => project.namespace.id === groupId
       );
       childProjects.forEach((project) => {
+        const projectChildren: D3TreeNode[] = [];
+
+        // shared_with_groups가 있고 프로젝트가 확장된 상태면 추가
+        if (
+          project.shared_with_groups &&
+          project.shared_with_groups.length > 0 &&
+          (showFullTree || expandedProjects.has(project.id))
+        ) {
+          project.shared_with_groups.forEach((sharedGroup, index) => {
+            projectChildren.push({
+              name: sharedGroup.group_full_path, // group_full_path로 표현
+              attributes: {
+                id: -(project.id * 1000 + index), // 고유한 음수 ID 생성
+                type: "group",
+                full_path: sharedGroup.group_full_path,
+                isSharedGroup: true,
+              },
+            });
+          });
+        }
+
         const projectNode: D3TreeNode = {
           name: project.name, // 프로젝트는 name만 표시
           attributes: {
@@ -82,25 +107,8 @@ export const GroupPage: React.FC = () => {
             type: "project",
             full_path: project.path_with_namespace,
           },
-          children: [],
+          children: projectChildren,
         };
-
-        // shared_with_groups가 있으면 추가
-        if (
-          project.shared_with_groups &&
-          project.shared_with_groups.length > 0
-        ) {
-          projectNode.children = project.shared_with_groups.map(
-            (sharedGroup, index) => ({
-              name: sharedGroup.group_full_path, // group_full_path로 표현
-              attributes: {
-                id: -index - 1,
-                type: "group" as const,
-                full_path: sharedGroup.group_full_path,
-              },
-            })
-          );
-        }
 
         children.push(projectNode);
       });
@@ -121,16 +129,59 @@ export const GroupPage: React.FC = () => {
     setTreeData(tree);
   };
 
+  // 그룹을 접을 때 하위 그룹들도 모두 접기
+  const collapseAllChildren = (groupId: number, groupsData: Group[]) => {
+    const childGroups = groupsData.filter(
+      (group) => group.parent_id === groupId
+    );
+    const newExpandedNodes = new Set(expandedNodes);
+
+    const removeChildrenRecursively = (parentId: number) => {
+      const children = groupsData.filter(
+        (group) => group.parent_id === parentId
+      );
+      children.forEach((child) => {
+        newExpandedNodes.delete(child.id);
+        removeChildrenRecursively(child.id);
+      });
+    };
+
+    removeChildrenRecursively(groupId);
+    setExpandedNodes(newExpandedNodes);
+  };
+
   const handleNodeClick = (nodeData: any) => {
     const nodeId = nodeData.attributes?.id;
-    if (nodeData.attributes?.type === "group" && nodeId) {
+    const nodeType = nodeData.attributes?.type;
+
+    if (nodeType === "group" && nodeId && !nodeData.attributes?.isSharedGroup) {
       const newExpandedNodes = new Set(expandedNodes);
       if (expandedNodes.has(nodeId)) {
         newExpandedNodes.delete(nodeId);
+        // 그룹을 접을 때 하위 그룹들도 모두 접기
+        const removeChildrenRecursively = (parentId: number) => {
+          const children = groups.filter(
+            (group) => group.parent_id === parentId
+          );
+          children.forEach((child) => {
+            newExpandedNodes.delete(child.id);
+            removeChildrenRecursively(child.id);
+          });
+        };
+        removeChildrenRecursively(nodeId);
+        setExpandedNodes(newExpandedNodes); // 이 부분이 중요!
       } else {
         newExpandedNodes.add(nodeId);
+        setExpandedNodes(newExpandedNodes);
       }
-      setExpandedNodes(newExpandedNodes);
+    } else if (nodeType === "project" && nodeId) {
+      const newExpandedProjects = new Set(expandedProjects);
+      if (expandedProjects.has(nodeId)) {
+        newExpandedProjects.delete(nodeId);
+      } else {
+        newExpandedProjects.add(nodeId);
+      }
+      setExpandedProjects(newExpandedProjects);
     }
   };
 
@@ -140,8 +191,10 @@ export const GroupPage: React.FC = () => {
     }
 
     // shared_with_groups의 경우 full_path에서 마지막 부분만 추출
-    const groupName = nodeName.includes('/') ? nodeName.split('/').pop() || nodeName : nodeName;
-    
+    const groupName = nodeName.includes("/")
+      ? nodeName.split("/").pop() || nodeName
+      : nodeName;
+
     switch (groupName.toLowerCase()) {
       case "architect":
         return "#5d9cec"; // 파란색
@@ -149,9 +202,21 @@ export const GroupPage: React.FC = () => {
         return "#e67e22"; // 주황색
       case "developer":
         return "#27ae60"; // 초록색
+      case "alarm":
+        return "#e74c3c"; // 빨간색
       default:
         return "#2c3e50"; // 기본 회색
     }
+  };
+
+  const isSpecialGroup = (nodeName: string): boolean => {
+    const groupName = nodeName.includes("/")
+      ? nodeName.split("/").pop() || nodeName
+      : nodeName;
+
+    return ["architect", "inspector", "developer", "alarm"].includes(
+      groupName.toLowerCase()
+    );
   };
 
   const renderCustomNodeElement = ({ nodeDatum }: any) => {
@@ -160,25 +225,46 @@ export const GroupPage: React.FC = () => {
       nodeDatum.attributes?.type || "group"
     );
     const hasChildren = nodeDatum.children && nodeDatum.children.length > 0;
-    const isExpanded = expandedNodes.has(nodeDatum.attributes?.id);
+    const nodeType = nodeDatum.attributes?.type;
+    const nodeId = nodeDatum.attributes?.id;
+
+    let isExpanded = false;
+    if (nodeType === "group" && !nodeDatum.attributes?.isSharedGroup) {
+      isExpanded = expandedNodes.has(nodeId);
+    } else if (nodeType === "project") {
+      isExpanded = expandedProjects.has(nodeId);
+    }
 
     // 긴 텍스트 처리
-    const displayName = nodeDatum.name.length > 15
-      ? `${nodeDatum.name.substring(0, 15)}...`
-      : nodeDatum.name;
+    const displayName =
+      nodeDatum.name.length > 15
+        ? `${nodeDatum.name.substring(0, 15)}...`
+        : nodeDatum.name;
+
+    // 특별한 그룹인지 확인 (테두리 제외 대상)
+    const needsBorder = !isSpecialGroup(nodeDatum.name);
 
     return (
       <g>
         <rect
-          width="160" // 폭을 늘려서 긴 텍스트 수용
+          width="160"
           height="40"
           x="-80"
           y="-20"
           fill={nodeColor}
           rx="8"
           ry="8"
-          stroke="#fff"
-          strokeWidth="2"
+          stroke={
+            needsBorder
+              ? nodeType === "project"
+                ? "#f39c12"
+                : "#34495e"
+              : "#fff"
+          }
+          strokeWidth={needsBorder ? "3" : "2"}
+          strokeDasharray={
+            needsBorder && nodeType === "project" ? "5,5" : "none"
+          }
           style={{ cursor: "pointer" }}
           onClick={() => handleNodeClick(nodeDatum)}
         />
@@ -189,29 +275,31 @@ export const GroupPage: React.FC = () => {
           y="5"
           textAnchor="middle"
           style={{
-            font: "bold 11px sans-serif", // 폰트 크기를 약간 줄임
+            font: "bold 11px sans-serif",
             cursor: "pointer",
           }}
           onClick={() => handleNodeClick(nodeDatum)}
         >
           {displayName}
         </text>
-        {hasChildren && !showFullTree && (
-          <text
-            fill="white"
-            strokeWidth="0"
-            x="65" // 위치 조정
-            y="-10"
-            textAnchor="middle"
-            style={{
-              font: "bold 14px sans-serif",
-              cursor: "pointer",
-            }}
-            onClick={() => handleNodeClick(nodeDatum)}
-          >
-            {isExpanded ? "−" : "+"}
-          </text>
-        )}
+        {hasChildren &&
+          !showFullTree &&
+          !nodeDatum.attributes?.isSharedGroup && (
+            <text
+              fill="white"
+              strokeWidth="0"
+              x="65"
+              y="-10"
+              textAnchor="middle"
+              style={{
+                font: "bold 14px sans-serif",
+                cursor: "pointer",
+              }}
+              onClick={() => handleNodeClick(nodeDatum)}
+            >
+              {isExpanded ? "−" : "+"}
+            </text>
+          )}
       </g>
     );
   };
@@ -252,11 +340,11 @@ export const GroupPage: React.FC = () => {
                 <Tree
                   data={treeData}
                   orientation="horizontal"
-                  translate={{ x: 120, y: 300 }} // x 시작점을 더 오른쪽으로
+                  translate={{ x: 120, y: 300 }}
                   pathFunc="step"
                   renderCustomNodeElement={renderCustomNodeElement}
-                  separation={{ siblings: 0.8, nonSiblings: 1.2 }} // 세로 간격 줄임
-                  nodeSize={{ x: 200, y: 80 }} // 가로 간격 늘림, 세로 간격 줄임
+                  separation={{ siblings: 0.8, nonSiblings: 1.2 }}
+                  nodeSize={{ x: 200, y: 80 }}
                   zoom={0.8}
                   collapsible={false}
                 />
