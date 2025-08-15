@@ -199,27 +199,10 @@ export const GroupPage: React.FC = () => {
     setTreeData(tree);
   };
 
-  // 전체 트리 펼치기
+  // 전체 트리 펼치기 (일회성 작업)
   const expandAllNodes = () => {
     const allGroupIds = new Set<number>();
     const allProjectIds = new Set<number>();
-
-    const collectIds = (nodes: D3TreeNode[]) => {
-      nodes.forEach((node) => {
-        if (
-          node.attributes?.type === "group" &&
-          !node.attributes?.isVirtualRoot
-        ) {
-          allGroupIds.add(node.attributes.id);
-        }
-        if (node.attributes?.type === "project") {
-          allProjectIds.add(node.attributes.id);
-        }
-        if (node.children) {
-          collectIds(node.children);
-        }
-      });
-    };
 
     // 모든 그룹과 프로젝트 ID 수집
     groups.forEach((group) => allGroupIds.add(group.id));
@@ -227,14 +210,14 @@ export const GroupPage: React.FC = () => {
 
     setExpandedNodes(allGroupIds);
     setExpandedProjects(allProjectIds);
-    setShowFullTree(true);
+    // showFullTree는 변경하지 않음 (일회성 작업)
   };
 
-  // 전체 트리 접기
+  // 전체 트리 접기 (일회성 작업)
   const collapseAllNodes = () => {
     setExpandedNodes(new Set([-999])); // 가상 루트만 유지
     setExpandedProjects(new Set());
-    setShowFullTree(false);
+    setShowFullTree(false); // 이것만 false로 변경
   };
 
   const handleNodeClick = (nodeData: any) => {
