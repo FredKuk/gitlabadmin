@@ -294,3 +294,41 @@ export const buildListData = (
 
   return listItems;
 };
+
+// 리스트에서 모든 그룹 ID를 재귀적으로 수집하는 함수
+export const getAllGroupIdsFromList = (items: ListItem[]): Set<number> => {
+  const allIds = new Set<number>();
+
+  const collectIds = (items: ListItem[]) => {
+    items.forEach((item) => {
+      if (item.type === "group" && !item.isSharedGroup) {
+        allIds.add(item.id);
+      }
+      if (item.children && item.children.length > 0) {
+        collectIds(item.children);
+      }
+    });
+  };
+
+  collectIds(items);
+  return allIds;
+};
+
+// 리스트 데이터에서 프로젝트 ID들을 수집하는 함수
+export const getAllProjectIdsFromList = (items: ListItem[]): Set<number> => {
+  const allIds = new Set<number>();
+
+  const collectIds = (items: ListItem[]) => {
+    items.forEach((item) => {
+      if (item.type === "project") {
+        allIds.add(item.id);
+      }
+      if (item.children && item.children.length > 0) {
+        collectIds(item.children);
+      }
+    });
+  };
+
+  collectIds(items);
+  return allIds;
+};

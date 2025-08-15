@@ -18,6 +18,8 @@ interface GroupListProps {
   onListNodeClick: (item: ListItem) => void;
   onListGroupDetailClick: (item: ListItem, event: React.MouseEvent) => void;
   onTogglePermissionGroups: (show: boolean) => void;
+  onExpandAllList: () => void; // 새로 추가
+  onCollapseAllList: () => void; // 새로 추가
 }
 
 export const GroupList: React.FC<GroupListProps> = ({
@@ -30,6 +32,8 @@ export const GroupList: React.FC<GroupListProps> = ({
   onListNodeClick,
   onListGroupDetailClick,
   onTogglePermissionGroups,
+  onExpandAllList, // 새로 추가
+  onCollapseAllList, // 새로 추가
 }) => {
   const listData = buildListData(groups, projects, showPermissionGroups);
 
@@ -114,6 +118,21 @@ export const GroupList: React.FC<GroupListProps> = ({
   return (
     <div className="group-list">
       <div className="list-controls">
+        <div className="control-buttons">
+          <button
+            className="control-btn expand-btn"
+            onClick={onExpandAllList}
+          >
+            전체 리스트 보기
+          </button>
+          <button
+            className="control-btn collapse-btn"
+            onClick={onCollapseAllList}
+          >
+            전체 리스트 접기
+          </button>
+        </div>
+
         <div className="control-checkbox">
           <label className="checkbox-container">
             <input

@@ -12,7 +12,49 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+
+    .control-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      .control-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+
+        &.expand-btn {
+          background-color: #28a745;
+          color: white;
+
+          &:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+          }
+        }
+
+        &.collapse-btn {
+          background-color: #dc3545;
+          color: white;
+
+          &:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
 
     .control-checkbox {
       .checkbox-container {
@@ -232,6 +274,16 @@
   .group-list {
     .list-controls {
       padding: 10px;
+      gap: 15px;
+
+      .control-buttons {
+        gap: 8px;
+
+        .control-btn {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
     }
 
     .list-container {
@@ -261,8 +313,29 @@
 @media (max-width: 768px) {
   .group-list {
     .list-controls {
-      padding: 8px;
-      text-align: center;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 10px;
+
+      .control-buttons {
+        justify-content: center;
+
+        .control-btn {
+          padding: 8px 12px;
+          font-size: 13px;
+          flex: 1;
+          max-width: 120px;
+        }
+      }
+
+      .control-checkbox {
+        text-align: center;
+
+        .checkbox-container {
+          justify-content: center;
+        }
+      }
     }
 
     .list-container {

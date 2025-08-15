@@ -4,7 +4,11 @@ import { useGroupData } from "./hooks/useGroupData";
 import { GroupGraph } from "./components/GroupGraph/GroupGraph";
 import { GroupList } from "./components/GroupList/GroupList";
 import { GroupSidePanel } from "./components/GroupSidePanel/GroupSidePanel";
-import { ListItem } from "./utils/groupUtils";
+import {
+  ListItem,
+  buildListData,
+  getAllGroupIdsFromList,
+} from "./utils/groupUtils";
 import "./GroupPage.scss";
 
 export const GroupPage: React.FC = () => {
@@ -157,6 +161,21 @@ export const GroupPage: React.FC = () => {
     }
   };
 
+  // 새로 추가된 리스트 전체 보기/접기 핸들러들
+  const handleExpandAllList = () => {
+    if (groups.length === 0) return;
+
+    // 현재 리스트 데이터 기준으로 모든 그룹 ID 수집
+    const listData = buildListData(groups, projects, showPermissionGroups);
+    const allGroupIds = getAllGroupIdsFromList(listData);
+
+    setExpandedListNodes(allGroupIds);
+  };
+
+  const handleCollapseAllList = () => {
+    setExpandedListNodes(new Set());
+  };
+
   // 공통 핸들러들
   const closeSidePanel = () => {
     setShowSidePanel(false);
@@ -237,6 +256,8 @@ export const GroupPage: React.FC = () => {
                 onListNodeClick={handleListNodeClick}
                 onListGroupDetailClick={handleListGroupDetailClick}
                 onTogglePermissionGroups={handleTogglePermissionGroups}
+                onExpandAllList={handleExpandAllList} // 새로 추가
+                onCollapseAllList={handleCollapseAllList} // 새로 추가
               />
             )}
           </div>
