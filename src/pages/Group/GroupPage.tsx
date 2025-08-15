@@ -3,7 +3,10 @@ import "./GroupPage.scss";
 import { Group, Project } from "../../types/group";
 import groupsData from "../../mock/groups_minimal.json";
 import projectsData from "../../mock/project_minimal.json";
+import departmentsData from "../../mock/departments.json";
+import teamsData from "../../mock/teams.json";
 import Tree from "react-d3-tree";
+import { GroupEditableCell } from "../../components/GroupEditableCell";
 
 interface D3TreeNode {
   name: string;
@@ -17,6 +20,19 @@ interface D3TreeNode {
   children?: D3TreeNode[];
 }
 
+// 그룹별 임시 데이터 (실제로는 API에서 가져올 데이터)
+interface GroupDetails {
+  department: string;
+  team: string;
+}
+
+// 유효성 검사 상태
+interface ValidationState {
+  [groupId: number]: {
+    [field: string]: boolean;
+  };
+}
+
 export const GroupPage: React.FC = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -28,15 +44,50 @@ export const GroupPage: React.FC = () => {
   );
   const [showFullTree, setShowFullTree] = useState(false);
   const [showPermissionGroups, setShowPermissionGroups] = useState(false);
-  // 사이드 패널 관련 state 추가
+
+  // 사이드 패널 관련 state
   const [showSidePanel, setShowSidePanel] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+
+  // 그룹 상세 정보 (편집 가능한 데이터)
+  const [groupDetails, setGroupDetails] = useState<{
+    [key: number]: GroupDetails;
+  }>({});
+
+  // 부서/팀 옵션
+  const [departments, setDepartments] = useState<string[]>([]);
+  const [teams, setTeams] = useState<string[]>([]);
+
+  // 유효성 검사 상태
+  const [validationState, setValidationState] = useState<ValidationState>({});
 
   useEffect(() => {
     const loadData = () => {
       try {
         setGroups(groupsData as Group[]);
         setProjects(projectsData as Project[]);
+        setDepartments(departmentsData as string[]);
+        setTeams(teamsData as string[]);
+
+        // 임시 그룹 상세 데이터 초기화
+        const initialDetails: { [key: number]: GroupDetails } = {};
+        const initialValidation: ValidationState = {};
+
+        (groupsData as Group[]).forEach((group) => {
+          initialDetails[group.id] = {
+            department: "개발부서", // 기본값
+            team: "프론트엔드팀", // 기본값
+          };
+
+          // 초기 유효성 상태 (기본값이므로 valid)
+          initialValidation[group.id] = {
+            department: false, // false = valid
+            team: false, // false = valid
+          };
+        });
+
+        setGroupDetails(initialDetails);
+        setValidationState(initialValidation);
       } catch (error) {
         console.error("Error loading data:", error);
       }
@@ -68,9 +119,16 @@ export const GroupPage: React.FC = () => {
     );
   };
 
-  // 그룹 상세보기 버튼 클릭 핸들러
+  // 그룹 상세보기 버튼 클릭 핸들러 (토글 기능 추가)
   const handleGroupDetailClick = (groupId: number, event: React.MouseEvent) => {
     event.stopPropagation(); // 노드 클릭 이벤트 방지
+
+    // 이미 같은 그룹이 선택되어 있으면 닫기
+    if (showSidePanel && selectedGroup?.id === groupId) {
+      closeSidePanel();
+      return;
+    }
+
     const group = groups.find((g) => g.id === groupId);
     if (group) {
       setSelectedGroup(group);
@@ -82,6 +140,36 @@ export const GroupPage: React.FC = () => {
   const closeSidePanel = () => {
     setShowSidePanel(false);
     setSelectedGroup(null);
+  };
+
+  // EditableCell 값 변경 핸들러
+  const handleCellChange = (field: "department" | "team", value: string) => {
+    if (!selectedGroup) return;
+
+    setGroupDetails((prev) => ({
+      ...prev,
+      [selectedGroup.id]: {
+        ...prev[selectedGroup.id],
+        [field]: value,
+      },
+    }));
+  };
+
+  // 유효성 검사 상태 변경 핸들러
+  const setInvalid = (groupId: number, field: string, isInvalid: boolean) => {
+    setValidationState((prev) => ({
+      ...prev,
+      [groupId]: {
+        ...prev[groupId],
+        [field]: isInvalid,
+      },
+    }));
+  };
+
+  // 현재 선택된 그룹의 유효성 검사 상태
+  const getCurrentValidation = (field: string): boolean => {
+    if (!selectedGroup) return false;
+    return validationState[selectedGroup.id]?.[field] || false;
   };
 
   const buildTree = (groupsData: Group[], projectsData: Project[]) => {
@@ -357,6 +445,9 @@ export const GroupPage: React.FC = () => {
       !isSpecialGroup(nodeDatum.name) &&
       !isVirtualRoot;
 
+    // 현재 선택된 그룹인지 확인 (circle 색상 변경용)
+    const isSelectedGroup = showSidePanel && selectedGroup?.id === nodeId;
+
     return (
       <g>
         <rect
@@ -419,7 +510,7 @@ export const GroupPage: React.FC = () => {
             cx="50"
             cy="8"
             r="8"
-            fill="#007bff"
+            fill={isSelectedGroup ? "#28a745" : "#007bff"} // 선택된 상태면 초록색
             stroke="#fff"
             strokeWidth="1"
             style={{ cursor: "pointer" }}
@@ -438,7 +529,7 @@ export const GroupPage: React.FC = () => {
               pointerEvents: "none",
             }}
           >
-            i
+            {isSelectedGroup ? "✓" : "i"} {/* 선택된 상태면 체크 표시 */}
           </text>
         )}
       </g>
@@ -538,11 +629,29 @@ export const GroupPage: React.FC = () => {
                     </div>
                     <div className="info-item">
                       <label>부서명:</label>
-                      <span>임시</span>
+                      <GroupEditableCell
+                        value={groupDetails[selectedGroup.id]?.department || ""}
+                        options={departments}
+                        onChange={(value) =>
+                          handleCellChange("department", value)
+                        }
+                        invalid={getCurrentValidation("department")}
+                        setInvalid={setInvalid}
+                        groupId={selectedGroup.id}
+                        field="department"
+                      />
                     </div>
                     <div className="info-item">
                       <label>팀명:</label>
-                      <span>임시</span>
+                      <GroupEditableCell
+                        value={groupDetails[selectedGroup.id]?.team || ""}
+                        options={teams}
+                        onChange={(value) => handleCellChange("team", value)}
+                        invalid={getCurrentValidation("team")}
+                        setInvalid={setInvalid}
+                        groupId={selectedGroup.id}
+                        field="team"
+                      />
                     </div>
                     <div className="info-item">
                       <label>생성일:</label>
