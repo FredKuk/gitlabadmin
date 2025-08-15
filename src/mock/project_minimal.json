@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "description": null,
+    "name": "test",
+    "name_with_namespace": "PPA / OQF / test",
+    "path": "test",
+    "path_with_namespace": "ppa/oqf/test",
+    "created_at": "2025-03-17T03:17:28.288Z",
+    "default_branch": "main",
+    "tag_list": [],
+    "topics": [],
+    "ssh_url_to_repo": "git@gitlab.example.com:ppa/oqf/test.git",
+    "http_url_to_repo": "http://gitlab.example.com/ppa/oqf/test.git",
+    "web_url": "http://gitlab.example.com/ppa/oqf/test",
+    "readme_url": "http://gitlab.example.com/ppa/oqf/test/-/blob/main/README.md",
+    "last_activity_at": "2025-07-11T06:22:16.634Z",
+    "namespace": {
+      "id": 3,
+      "name": "OQF",
+      "path": "oqf",
+      "kind": "group",
+      "full_path": "ppa/oqf",
+      "parent_id": 2,
+      "avatar_url": null,
+      "web_url": "http://gitlab.example.com/groups/ppa/oqf"
+    },
+    "shared_with_groups": [
+      {
+        "group_id": 7,
+        "group_name": "developer",
+        "group_full_path": "ppa/oqf/developer",
+        "group_access_level": 30,
+        "expires_at": "2035-08-16"
+      },
+      {
+        "group_id": 12,
+        "group_name": "architect",
+        "group_full_path": "ppa/oqf/architect",
+        "group_access_level": 30,
+        "expires_at": null
+      },
+      {
+        "group_id": 13,
+        "group_name": "inspector",
+        "group_full_path": "ppa/oqf/inspector",
+        "group_access_level": 30,
+        "expires_at": null
+      }
+    ]
+  }
+]

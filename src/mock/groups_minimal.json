@@ -1,0 +1,52 @@
+[
+  {
+    "id": 3,
+    "web_url": "http://gitlab.example.com/groups/ppa/oqf",
+    "name": "OQF",
+    "path": "oqf",
+    "full_name": "PPA / OQF",
+    "full_path": "ppa/oqf",
+    "created_at": "2025-03-17T01:46:25.626Z",
+    "parent_id": 2
+  },
+  {
+    "id": 2,
+    "web_url": "http://gitlab.example.com/groups/ppa",
+    "name": "PPA",
+    "path": "ppa",
+    "full_name": "PPA",
+    "full_path": "ppa",
+    "created_at": "2025-03-17T01:45:57.198Z",
+    "parent_id": null
+  },
+  {
+    "id": 12,
+    "web_url": "http://gitlab.example.com/groups/ppa/oqf/architect",
+    "name": "architect",
+    "path": "architect",
+    "full_name": "PPA / OQF / architect",
+    "full_path": "ppa/oqf/architect",
+    "created_at": "2025-08-15T07:07:11.635Z",
+    "parent_id": 3
+  },
+  {
+    "id": 7,
+    "web_url": "http://gitlab.example.com/groups/ppa/oqf/developer",
+    "name": "developer",
+    "path": "developer",
+    "full_name": "PPA / OQF / developer",
+    "full_path": "ppa/oqf/developer",
+    "created_at": "2025-08-15T07:01:45.138Z",
+    "parent_id": 3
+  },
+  {
+    "id": 13,
+    "web_url": "http://gitlab.example.com/groups/ppa/oqf/inspector",
+    "name": "inspector",
+    "path": "inspector",
+    "full_name": "PPA / OQF / inspector",
+    "full_path": "ppa/oqf/inspector",
+    "created_at": "2025-08-15T07:07:19.477Z",
+    "parent_id": 3
+  }
+]
