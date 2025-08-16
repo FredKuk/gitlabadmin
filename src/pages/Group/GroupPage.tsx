@@ -132,12 +132,16 @@ export const GroupPage: React.FC = () => {
 
   // 리스트 뷰 핸들러들
   const handleListNodeClick = (item: ListItem) => {
-    if (item.type === "group" && !item.isSharedGroup) {
+    // 그룹이거나 프로젝트이고, shared_group이 아닌 경우 토글
+    if ((item.type === "group" && !item.isSharedGroup) || item.type === "project") {
+      const itemId = typeof item.id === "string" ? 
+        parseInt(item.id) : item.id;
+      
       const newExpandedNodes = new Set(expandedListNodes);
-      if (expandedListNodes.has(item.id)) {
-        newExpandedNodes.delete(item.id);
+      if (expandedListNodes.has(itemId)) {
+        newExpandedNodes.delete(itemId);
       } else {
-        newExpandedNodes.add(item.id);
+        newExpandedNodes.add(itemId);
       }
       setExpandedListNodes(newExpandedNodes);
     }

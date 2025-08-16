@@ -45,7 +45,14 @@ export const GroupList: React.FC<GroupListProps> = ({
     if (!isVisible) return [];
 
     const hasChildren = item.children && item.children.length > 0;
-    const isExpanded = expandedListNodes.has(item.id);
+    // 프로젝트의 경우 shared_with_groups가 있으면 hasChildren = true
+    const hasSharedGroups = item.type === "project" && item.hasSharedGroups && showPermissionGroups;
+    const actuallyHasChildren = hasChildren || hasSharedGroups;
+
+    // ID 처리 (string일 수도 있고 number일 수도 있음)
+    const itemId = typeof item.id === "string" ? parseInt(item.id) : item.id;
+
+    const isExpanded = expandedListNodes.has(itemId);
     const isSelectedGroup = showSidePanel && selectedGroup?.id === item.id;
 
     // 들여쓰기 계산 (레벨당 20px)
@@ -72,10 +79,10 @@ export const GroupList: React.FC<GroupListProps> = ({
         }}
       >
         <div className="list-item-content">
-          {hasChildren && (
+          {actuallyHasChildren && (
             <span className="expand-icon">{isExpanded ? "▼" : "▶"}</span>
           )}
-          {!hasChildren && <span className="expand-icon-placeholder"></span>}
+          {!actuallyHasChildren && <span className="expand-icon-placeholder"></span>}
 
           <div
             className={`list-node ${item.type}`}
@@ -106,7 +113,7 @@ export const GroupList: React.FC<GroupListProps> = ({
     ];
 
     // 자식 아이템들 렌더링 (확장된 경우만)
-    if (hasChildren && isExpanded) {
+    if (actuallyHasChildren && isExpanded) {
       item.children!.forEach((child) => {
         result.push(...renderListItem(child, true));
       });

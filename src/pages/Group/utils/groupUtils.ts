@@ -47,14 +47,14 @@ export const isSpecialGroup = (nodeName: string): boolean => {
 
 // 리스트 아이템 인터페이스
 export interface ListItem {
-  id: number;
+  id: number | string;
   name: string;
-  type: "group" | "project";
-  full_path: string;
+  type: "group" | "project" | "shared_group";
   level: number;
-  parent_id?: number | null;
-  children?: ListItem[];
+  full_path: string;
+  children: ListItem[];
   isSharedGroup?: boolean;
+  hasSharedGroups?: boolean;
 }
 
 // D3 트리 노드 인터페이스
@@ -210,90 +210,123 @@ export const buildTreeData = (
 };
 
 // 리스트 데이터 구축 함수
-export const buildListData = (
-  groupsData: Group[],
-  projectsData: Project[],
+export function buildListData(
+  groups: Group[],
+  projects: Project[],
   showPermissionGroups: boolean
-): ListItem[] => {
-  const rootGroups = groupsData.filter((group) => group.parent_id === null);
+): ListItem[] {
+  const permissionGroupNames = ["alarm", "architect", "developer", "inspector"];
 
-  const buildListChildren = (parentId: number, level: number): ListItem[] => {
-    const items: ListItem[] = [];
+  // 그룹별 하위 그룹과 프로젝트를 저장할 맵
+  const groupChildrenMap = new Map<number, { groups: Group[]; projects: Project[] }>();
 
-    const childGroups = groupsData.filter(
-      (group) => group.parent_id === parentId
-    );
-    childGroups.forEach((group) => {
-      if (!showPermissionGroups && isPermissionGroup(group.name)) {
-        return;
+  // 모든 그룹 초기화
+  groups.forEach((group) => {
+    groupChildrenMap.set(group.id, { groups: [], projects: [] });
+  });
+
+  // 하위 그룹 매핑
+  groups.forEach((group) => {
+    if (group.parent_id) {
+      const parentData = groupChildrenMap.get(group.parent_id);
+      if (parentData) {
+        parentData.groups.push(group);
       }
+    }
+  });
 
-      const groupItem: ListItem = {
-        id: group.id,
-        name: group.name,
-        type: "group",
-        full_path: group.full_path,
-        level: level,
-        parent_id: group.parent_id,
-        children: buildListChildren(group.id, level + 1),
-      };
+  // 프로젝트를 올바른 그룹에 매핑
+  projects.forEach((project) => {
+    if (project.namespace?.id) {
+      const groupData = groupChildrenMap.get(project.namespace.id);
+      if (groupData) {
+        groupData.projects.push(project);
+      }
+    }
+  });
 
-      items.push(groupItem);
-    });
+  // 프로젝트를 ListItem으로 변환
+  function projectToListItem(project: Project, level: number): ListItem {
+    const children: ListItem[] = [];
 
-    const childProjects = projectsData.filter(
-      (project) => project.namespace.id === parentId
-    );
-    childProjects.forEach((project) => {
-      const projectItem: ListItem = {
-        id: project.id,
-        name: project.name,
-        type: "project",
-        full_path: project.path_with_namespace,
-        level: level,
-        children: [],
-      };
-
-      items.push(projectItem);
-
-      if (project.shared_with_groups && project.shared_with_groups.length > 0) {
-        project.shared_with_groups.forEach((sharedGroup, index) => {
-          if (
-            !showPermissionGroups &&
-            isPermissionGroup(sharedGroup.group_full_path)
-          ) {
-            return;
-          }
-
-          const sharedItem: ListItem = {
-            id: -(project.id * 1000 + index),
-            name: sharedGroup.group_full_path,
-            type: "group",
-            full_path: sharedGroup.group_full_path,
-            level: level + 1,
-            isSharedGroup: true,
-          };
-
-          projectItem.children?.push(sharedItem);
+    // shared_with_groups를 하위 노드로 추가 (권한그룹보기 체크 시에만)
+    if (showPermissionGroups && project.shared_with_groups && Array.isArray(project.shared_with_groups)) {
+      project.shared_with_groups.forEach((sharedGroup) => {
+        children.push({
+          id: `project-${project.id}-shared-${sharedGroup.group_id}`,
+          name: sharedGroup.group_name,
+          type: "shared_group",
+          level: level + 1,
+          full_path: sharedGroup.group_full_path,
+          children: [],
+          isSharedGroup: true,
         });
-      }
-    });
+      });
+    }
 
-    return items;
-  };
+    return {
+      id: project.id,
+      name: project.name,
+      type: "project",
+      level,
+      full_path: project.path_with_namespace,
+      children,
+      hasSharedGroups: project.shared_with_groups && project.shared_with_groups.length > 0,
+    };
+  }
 
-  const listItems: ListItem[] = rootGroups.map((rootGroup) => ({
-    id: rootGroup.id,
-    name: rootGroup.name,
-    type: "group" as const,
-    full_path: rootGroup.full_path,
-    level: 0,
-    parent_id: rootGroup.parent_id,
-    children: buildListChildren(rootGroup.id, 1),
-  }));
+  // 그룹을 ListItem으로 변환
+  function groupToListItem(group: Group, level: number): ListItem | null {
+    // 권한그룹은 showPermissionGroups가 false면 필터링
+    if (
+      permissionGroupNames.includes(group.name) &&
+      !showPermissionGroups
+    ) {
+      return null;
+    }
 
-  return listItems;
-};
+    const children: ListItem[] = [];
+    const groupData = groupChildrenMap.get(group.id);
+
+    if (groupData) {
+      // 하위 그룹 추가
+      groupData.groups.forEach((subgroup) => {
+        const childItem = groupToListItem(subgroup, level + 1);
+        if (childItem) {
+          children.push(childItem);
+        }
+      });
+
+      // 그룹의 직접 프로젝트 추가
+      groupData.projects.forEach((project) => {
+        children.push(projectToListItem(project, level + 1));
+      });
+    }
+
+    return {
+      id: group.id,
+      name: group.name,
+      type: "group",
+      level,
+      full_path: group.full_path,
+      children,
+      isSharedGroup: false,
+    };
+  }
+
+  // 최상위 그룹들 처리 (parent_id가 null인 그룹들)
+  const topLevelGroups = groups.filter((group) => !group.parent_id);
+  const result: ListItem[] = [];
+
+  topLevelGroups.forEach((group) => {
+    const item = groupToListItem(group, 0);
+    if (item) {
+      result.push(item);
+    }
+  });
+
+  return result;
+}
 
 // 리스트에서 모든 그룹 ID를 재귀적으로 수집하는 함수
 export const getAllGroupIdsFromList = (items: ListItem[]): Set<number> => {
@@ -301,7 +334,7 @@ export const getAllGroupIdsFromList = (items: ListItem[]): Set<number> => {
 
   const collectIds = (items: ListItem[]) => {
     items.forEach((item) => {
-      if (item.type === "group" && !item.isSharedGroup) {
+      if (item.type === "group" && !item.isSharedGroup && typeof item.id === "number") {
         allIds.add(item.id);
       }
       if (item.children && item.children.length > 0) {
@@ -320,13 +353,13 @@ export const getAllProjectIdsFromList = (items: ListItem[]): Set<number> => {
 
   const collectIds = (items: ListItem[]) => {
     items.forEach((item) => {
-      if (item.type === "project") {
-        allIds.add(item.id);
-      }
-      if (item.children && item.children.length > 0) {
-        collectIds(item.children);
-      }
-    });
+          if (item.type === "project" && typeof item.id === "number") {
+            allIds.add(item.id);
+          }
+          if (item.children && item.children.length > 0) {
+            collectIds(item.children);
+          }
+        });
   };
 
   collectIds(items);
