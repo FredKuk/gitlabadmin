@@ -365,3 +365,33 @@ export const getAllProjectIdsFromList = (items: ListItem[]): Set<number> => {
   collectIds(items);
   return allIds;
 };
+
+// 프로젝트/그룹 중 실제로 "펼칠 수 있는" 노드들의 ID 수집
+export const getAllExpandableIdsFromList = (
+  items: ListItem[],
+  showPermissionGroups: boolean
+): Set<number> => {
+  const ids = new Set<number>();
+
+  const walk = (nodes: ListItem[]) => {
+    for (const n of nodes) {
+      if (n.type === "group" && typeof n.id === "number") {
+        ids.add(n.id);
+      }
+      if (
+        n.type === "project" &&
+        n.hasSharedGroups &&           // 실제로 공유 그룹이 있고
+        showPermissionGroups &&        // 권한그룹보기가 켜진 상태에서만
+        typeof n.id === "number"
+      ) {
+        ids.add(n.id);
+      }
+      if (n.children && n.children.length > 0) {
+        walk(n.children);
+      }
+    }
+  };
+
+  walk(items);
+  return ids;
+};
