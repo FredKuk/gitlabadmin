@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "name": "프로젝트ONE",
+        "start_at": "2025-08-15",
+        "end_at": "2026-08-15",
+        "involve_teams":[
+            {
+                
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "web_url": "http://gitlab.example.com/groups/cma",
+        "name": "프로젝트FIRST",
+        "path": "cma",
+        "full_name": "CMA",
+        "full_path": "cma",
+        "created_at": "2025-08-15T11:28:03.226Z",
+        "parent_id": null
+    }
+]

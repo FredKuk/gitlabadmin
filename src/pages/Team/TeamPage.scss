@@ -1,0 +1,310 @@
+// Modern, responsive, and polished styles for TeamPage
+
+// Palette & tokens
+$bg: #eef2f5;
+$surface: #ffffff;
+$surface-muted: #f7f9fb;
+$border: #d7dee6;
+$border-strong: #9fb3c7;
+$text: #1d2833;
+$text-subtle: #5b6b79;
+
+$primary: #226b90;      // deep teal-blue
+$primary-strong: #0c4661;
+$accent: #f5b400;       // warm yellow
+$accent-strong: #e69a00;
+$success: #18b46b;
+$danger: #e53935;
+$info: #4b8fd3;
+
+$radius: 12px;
+$radius-sm: 10px;
+$radius-xs: 8px;
+
+$shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+$shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+$shadow-inset: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.06);
+
+$gap: 14px;
+$pad: 12px;
+
+// Root
+.teampage {
+  width: 100dvw;
+  margin-left: calc(50% - 50dvw);
+  margin-right: calc(50% - 50dvw);
+
+  // 높이 조절: GroupPage.scss와 동일 규칙 적용
+  height: 100dvh;     // 기본
+  min-height: 0;      // 중요: 100dvh로 고정되지 않게
+  max-height: 100dvh;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) 12px minmax(0, 1.15fr);
+  grid-auto-rows: 1fr;
+  gap: 0;
+  padding: clamp(8px, 1.2vw, 18px);
+  box-sizing: border-box;
+  overflow: hidden;
+  background: linear-gradient(180deg, $bg 0%, lighten($bg, 2%) 100%);
+}
+
+// Divider
+.divider {
+  width: 10px;
+  background: linear-gradient(180deg, $primary 0%, $primary-strong 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 0 0 1px rgba(0,0,0,0.06);
+  border-radius: $radius;
+}
+
+// Panel
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; // allow children to shrink
+  background: $surface;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+  overflow: hidden;
+
+  // Header
+  .panel-header {
+    background: linear-gradient(180deg, $surface 0%, $surface-muted 100%);
+    color: $primary-strong;
+    text-align: center;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    padding: 12px 10px;
+    border-bottom: 1px solid $border;
+    flex: 0 0 auto;
+  }
+
+  // Controls
+  .panel-controls {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(247, 249, 251, 0.9);
+    border-bottom: 1px solid $border;
+  }
+
+  // Content
+  .panel-content {
+    flex: 1 1 auto;
+    min-height: 0;      // 중요
+    overflow: auto;     // 스크롤은 여기에서만
+    padding: 16px;
+    background: $surface;
+
+    // 스크롤바
+    &::-webkit-scrollbar { width: 10px; height: 10px; }
+    &::-webkit-scrollbar-track { background: $surface-muted; border-radius: 8px; }
+    &::-webkit-scrollbar-thumb {
+      background: lighten($primary, 25%);
+      border: 2px solid $surface-muted;
+      border-radius: 8px;
+    }
+    &::-webkit-scrollbar-thumb:hover { background: lighten($primary, 15%); }
+  }
+}
+
+// Buttons
+.btn {
+  appearance: none;
+  border: 1px solid $border-strong;
+  border-radius: $radius-xs;
+  padding: 9px 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: $shadow-sm, $shadow-inset;
+  transition: transform 0.06s ease, filter 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &.green { background: linear-gradient(180deg, lighten($success, 4%) 0%, $success 100%); }
+  &.red   { background: linear-gradient(180deg, lighten($danger, 4%) 0%, $danger 100%); }
+  &.blue  { background: linear-gradient(180deg, lighten($info, 6%) 0%, $info 100%); }
+
+  &:hover { filter: brightness(1.05); }
+  &:active { transform: translateY(1px); box-shadow: $shadow-inset; }
+  &:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba($info, 0.2), 0 0 0 1px rgba($info, 0.8);
+  }
+}
+
+// Rows & children
+.row {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+  margin: 18px 0;
+  flex-wrap: wrap;
+}
+
+.children {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  animation: fadeSlideIn 160ms ease-out both;
+}
+
+// Chips
+.chip {
+  padding: 10px 20px;
+  border-radius: $radius-sm;
+  border: 1px solid $border-strong;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #fff4cc 0%, #ffe189 100%);
+  color: $text;
+  box-shadow: $shadow-sm, $shadow-inset;
+  white-space: nowrap;
+  transition: transform 0.06s ease, filter 0.25s ease, box-shadow 0.2s ease, background 0.2s ease;
+  user-select: none;
+
+  &:hover { filter: brightness(1.02); }
+  &:active { transform: translateY(1px); box-shadow: $shadow-inset; }
+}
+
+// Dept (left column)
+.chip.dept {
+  background: linear-gradient(180deg, lighten($primary, 2%) 0%, $primary 100%);
+  color: #eaf4fb;
+  border: 1px solid darken($primary-strong, 2%);
+}
+.chip.dept.open { filter: brightness(1.06); }
+
+// Team tag
+.chip.team {
+  background: linear-gradient(180deg, lighten($accent, 15%) 0%, $accent 100%);
+  color: #1a1a1a;
+  border: 1px solid darken($accent, 5%);
+}
+
+// Project (right column root)
+.chip.project {
+  background: linear-gradient(180deg, lighten($primary, 2%) 0%, $primary 100%);
+  color: #eaf4fb;
+  border: 1px solid darken($primary-strong, 2%);
+}
+.chip.project.open { filter: brightness(1.06); }
+
+// Shared groups under project
+.chip.shared {
+  background: linear-gradient(180deg, lighten($accent, 15%) 0%, $accent 100%);
+  color: #1a1a1a;
+  border: 1px solid darken($accent, 5%);
+}
+
+// Animations
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// Responsive
+@media (max-height: 900px) {
+  .panel {
+    .panel-header { padding: 10px 8px; font-size: 20px; }
+    .panel-controls { padding: 8px 10px; gap: 6px; }
+    .panel-content { padding: 12px; }
+  }
+  .btn { padding: 7px 12px; }
+  .chip { padding: 8px 16px; }
+}
+
+@media (max-height: 750px) {
+  .panel {
+    .panel-header { padding: 8px 8px; font-size: 18px; }
+    .panel-controls { padding: 6px 8px; gap: 6px; }
+    .panel-content { padding: 10px; }
+  }
+  .btn { padding: 6px 10px; }
+  .chip { padding: 7px 14px; }
+}
+
+// 큰 해상도에서 더 넓게 보이도록 좌우 패널 가중치 확대
+@media (min-width: 1600px) {
+  .teampage {
+    grid-template-columns: minmax(0, 1.25fr) 14px minmax(0, 1.25fr);
+    padding: clamp(10px, 1vw, 20px);
+  }
+}
+
+/* 화면 높이별 미디어 쿼리 (GroupPage.scss와 동일) */
+@media (min-height: 1200px) {
+  .teampage { height: 100vh; }
+}
+
+@media (min-height: 1080px) and (max-height: 1199px) {
+  .teampage { height: 98vh; }
+}
+
+@media (min-height: 900px) and (max-height: 1079px) {
+  .teampage { height: 90vh; }
+}
+
+@media (min-height: 800px) and (max-height: 899px) {
+  .teampage { height: 85vh; }
+}
+
+@media (min-height: 700px) and (max-height: 799px) {
+  .teampage { height: 82vh; }
+}
+
+@media (min-height: 600px) and (max-height: 699px) {
+  .teampage { height: 80vh; }
+}
+
+@media (min-height: 500px) and (max-height: 599px) {
+  .teampage { height: 78vh; }
+}
+
+@media (min-height: 400px) and (max-height: 499px) {
+  .teampage { height: 73vh; }
+}
+
+@media (min-height: 300px) and (max-height: 399px) {
+  .teampage { height: 70vh; }
+}
+
+@media (max-height: 299px) {
+  .teampage { height: 65vh; }
+}
+
+/* 좁은 화면(1열) 레이아웃: 높이 고정하지 않음 */
+@media (max-width: 1024px) {
+  .teampage {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 8px auto;
+    gap: 10px;
+    // height/min-height 설정 제거 (상단 미디어쿼리 규칙을 그대로 사용)
+  }
+  .divider {
+    width: 100%;
+    height: 8px;
+    border-radius: $radius;
+    background: linear-gradient(90deg, $primary 0%, $primary-strong 100%);
+  }
+}
+
+// Dark mode polish
+@media (prefers-color-scheme: dark) {
+  $bg-dark: #0f1418;
+  $surface-dark: #171d22;
+  $border-dark: #2a3440;
+  $text-dark: #ecf1f5;
+
+  .teampage { background: linear-gradient(180deg, $bg-dark 0%, darken($bg-dark, 2%) 100%); color: $text-dark; }
+  .panel { background: $surface-dark; border-color: $border-dark; }
+  .panel .panel-header { background: linear-gradient(180deg, lighten($surface-dark, 2%) 0%, $surface-dark 100%); border-color: $border-dark; }
+  .panel .panel-controls { background: rgba(28, 34, 40, 0.75); border-color: $border-dark; }
+  .panel .panel-content { background: $surface-dark; }
+  .chip,
+  .chip.team,
+  .chip.shared { color: #101418; } // keep readability on warm chips
+}

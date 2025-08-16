@@ -10,6 +10,7 @@ const mockData = {
     start: "2026.03.01",
     end: "2027.08.01",
   },
+  totalUsers: 590, // 총유저 추가
   license: "hanabank.com.license",
   licenseButtons: ["View", "Down", "Upload"],
   certificateData: [
@@ -122,6 +123,25 @@ export const LicencePage: React.FC = () => {
   const [viewContent, setViewContent] = useState("");
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
+  // 총유저 인라인 편집 상태
+  const [totalUsers, setTotalUsers] = useState<number>(mockData.totalUsers);
+  const [isEditingUsers, setIsEditingUsers] = useState(false);
+  const [tempUsers, setTempUsers] = useState<string>(String(mockData.totalUsers));
+
+  const startEditUsers = () => {
+    setTempUsers(String(totalUsers));
+    setIsEditingUsers(true);
+  };
+  const commitUsers = () => {
+    const parsed = parseInt((tempUsers || "").replace(/,/g, ""), 10);
+    if (!isNaN(parsed) && parsed >= 0) setTotalUsers(parsed);
+    setIsEditingUsers(false);
+  };
+  const cancelUsers = () => {
+    setTempUsers(String(totalUsers));
+    setIsEditingUsers(false);
+  };
+
   const handleViewClick = (content: string) => {
     setViewContent(content);
     setIsViewModalOpen(true);
@@ -142,6 +162,31 @@ export const LicencePage: React.FC = () => {
 
         <div className="license-info-top">
           <div className="info-row">
+            {/* 총유저 | 590 | 기간 | 2026.03.01 | 2027.08.01 */}
+            <div className="info-label little-padding">총유저</div>
+            <div
+              className="info-value info-border-right little-padding editable"
+              onClick={!isEditingUsers ? startEditUsers : undefined}
+              title="클릭하여 수정"
+              role="button"
+            >
+              {isEditingUsers ? (
+                <input
+                  type="number"
+                  className="inline-edit-input"
+                  value={tempUsers}
+                  autoFocus
+                  onChange={(e) => setTempUsers(e.target.value)}
+                  onBlur={commitUsers}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitUsers();
+                    if (e.key === "Escape") cancelUsers();
+                  }}
+                />
+              ) : (
+                totalUsers.toLocaleString()
+              )}
+            </div>
             <div className="info-label little-padding">기간</div>
             <div className="info-value info-border-right little-padding">
               {mockData.period.start}
