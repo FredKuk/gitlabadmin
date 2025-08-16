@@ -36,6 +36,26 @@ const mockData = {
   ],
 };
 
+// Build 계열 mock 데이터 추가
+const buildData = [
+  { label: "config", date: "2025.06.06~", content: "config..." },
+  { label: "gitlab-runner", date: "2025.06.06~", content: "gitlab-runner..." },
+  { label: "podman", date: "2025.06.06~", content: "podman..." },
+  { label: "socket", date: "2025.06.06~", content: "socket..." },
+];
+
+// 섹션 정보 배열 순서 및 이름 수정
+const serviceSections = [
+  { title: "Primary", version: "1.0", os: "Linux", data: mockData.serviceData },
+  { title: "Secondary", version: "1.0", os: "Linux", data: mockData.serviceData },
+  { title: "DR", version: "1.0", os: "Linux", data: mockData.serviceData },
+  { title: "Build1", version: "1.0", os: "Linux", data: buildData },
+  { title: "Build2", version: "1.0", os: "Linux", data: buildData },
+  { title: "DR-Build1", version: "1.0", os: "Linux", data: buildData },
+  { title: "Primary -Dev", version: "1.0", os: "Linux", data: mockData.serviceData },
+  { title: "Secondary -Dev", version: "1.0", os: "Linux", data: mockData.serviceData },
+];
+
 // 재사용 가능한 ServiceSection 컴포넌트의 타입 정의
 interface ServiceSectionProps {
   title: string;
@@ -48,6 +68,7 @@ interface ServiceSectionProps {
   onUpload: () => void;
 }
 
+// ServiceSection 컴포넌트에서 클래스명 및 스타일 적용
 const ServiceSection: React.FC<ServiceSectionProps> = ({
   title,
   version,
@@ -68,9 +89,9 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({
     </div>
     {data.map((item, index) => (
       <div key={index} className="info-row license-row">
-        <div className="info-label">{item.label}</div>
-        <div className="info-value-wide">{item.date}</div>
-        <div className="license-buttons-col">
+        <div className="info-label compact">{item.label}</div>
+        <div className="info-value-wide compact">{item.date}</div>
+        <div className="config-buttons-row">
           {licenseButtons.map((button, buttonIndex) => (
             <button
               key={buttonIndex}
@@ -193,37 +214,20 @@ export const LicencePage: React.FC = () => {
           ))}
         </div>
 
-        <div className="license-sections-container">
-          <ServiceSection
-            title="Primary"
-            version="1.0" // version prop 추가
-            os="Linux" // os prop 추가
-            data={mockData.serviceData}
-            licenseButtons={mockData.licenseButtons}
-            onView={handleViewClick}
-            onDownload={handleDownloadClick}
-            onUpload={handleUploadClick}
-          />
-          <ServiceSection
-            title="Secondary"
-            version="1.0" // version prop 추가
-            os="Linux" // os prop 추가
-            data={mockData.serviceData}
-            licenseButtons={mockData.licenseButtons}
-            onView={handleViewClick}
-            onDownload={handleDownloadClick}
-            onUpload={handleUploadClick}
-          />
-          <ServiceSection
-            title="DR"
-            version="1.0" // version prop 추가
-            os="Linux" // os prop 추가
-            data={mockData.serviceData}
-            licenseButtons={mockData.licenseButtons}
-            onView={handleViewClick}
-            onDownload={handleDownloadClick}
-            onUpload={handleUploadClick}
-          />
+        <div className="license-sections-grid">
+          {serviceSections.map((section, idx) => (
+            <ServiceSection
+              key={section.title}
+              title={section.title}
+              version={section.version}
+              os={section.os}
+              data={section.data}
+              licenseButtons={mockData.licenseButtons}
+              onView={handleViewClick}
+              onDownload={handleDownloadClick}
+              onUpload={handleUploadClick}
+            />
+          ))}
         </div>
 
         {/* View Modal */}

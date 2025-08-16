@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Tree from "react-d3-tree";
 import { Group, Project } from "../../../../types/group";
 import {
@@ -40,6 +40,7 @@ export const GroupGraph: React.FC<GroupGraphProps> = ({
   onCollapseAll,
   onTogglePermissionGroups,
 }) => {
+
   const treeData = buildTreeData(
     groups,
     projects,
@@ -48,6 +49,17 @@ export const GroupGraph: React.FC<GroupGraphProps> = ({
     showFullTree,
     showPermissionGroups
   );
+
+  // 컨테이너 높이 기반 translate.y 계산
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [translateY, setTranslateY] = useState(100); // 기본값
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const height = containerRef.current.offsetHeight;
+      setTranslateY(height * 0.3); // 위에서 30% 위치
+    }
+  }, [treeData.length, showSidePanel]);
 
   const renderCustomNodeElement = ({ nodeDatum }: any) => {
     const isVirtualRoot = nodeDatum.attributes?.isVirtualRoot;
@@ -208,12 +220,12 @@ export const GroupGraph: React.FC<GroupGraphProps> = ({
         </div>
       </div>
 
-      <div className="graph-container">
+      <div className="graph-container" ref={containerRef}>
         {treeData.length > 0 && (
           <Tree
             data={treeData}
             orientation="horizontal"
-            translate={{ x: 100, y: 50 }}
+            translate={{ x: 100, y: translateY }}
             pathFunc="step"
             renderCustomNodeElement={renderCustomNodeElement}
             separation={{ siblings: 0.6, nonSiblings: 0.9 }}

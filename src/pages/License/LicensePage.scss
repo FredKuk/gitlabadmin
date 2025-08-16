@@ -21,7 +21,7 @@ $card-bg-color: #383838;
   font-size: 1.1vw; // 화면 너비에 따라 폰트 크기 자동 조정
 
   .table-wrapper {
-    max-height: 80vh; // 화면 높이에 따라 테이블 높이 제한
+    max-height: 85vh; // 화면 높이에 따라 테이블 높이 제한
     overflow-y: auto;
   }
 
@@ -347,6 +347,102 @@ h2 {
   }
 }
 
+// info-label: 내용이 짤리지 않도록 min/max width 조정 (예: 80~110px)
+.info-label {
+  min-width: 80px;
+  max-width: 110px;
+  flex: 0 0 90px;
+  font-weight: bold;
+  color: #fff;
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 8px !important;
+
+  &.compact {
+    min-width: 70px;
+    max-width: 100px;
+    flex: 0 0 80px;
+    font-size: 0.98em;
+    padding: 4px 6px !important;
+  }
+}
+
+// info-value-wide: 내용이 안 짤릴 정도로만 width 조정 (예: 90~120px)
+.info-value-wide {
+  min-width: 90px;
+  max-width: 120px;
+  flex: 0 0 100px;
+  color: #fff;
+  font-size: 0.86em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 8px !important;
+
+  &.compact {
+    min-width: 80px;
+    max-width: 110px;
+    flex: 0 0 90px;
+    font-size: 0.95em;
+    padding: 4px 6px !important;
+  }
+}
+
+// info-row 안의 버튼 스타일 개선
+.config-buttons-row {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+
+  button {
+    min-width: 40px;
+    max-width: 56px;
+    padding: 3px 8px;
+    font-size: 0.72em;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: 
+      background 0.18s, 
+      color 0.18s, 
+      box-shadow 0.18s, 
+      transform 0.12s;
+
+    &:hover {
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 4px 16px rgba(93,156,236,0.18);
+      filter: brightness(1.08);
+    }
+  }
+
+  .primary {
+    background: linear-gradient(90deg, #5d9cec 60%, #4177c2 100%);
+    color: #fff;
+    &:hover {
+      background: linear-gradient(90deg, #4177c2 60%, #5d9cec 100%);
+    }
+  }
+  .secondary {
+    background: linear-gradient(90deg, #384252 60%, #232831 100%);
+    color: #fff;
+    &:hover {
+      background: linear-gradient(90deg, #232831 60%, #384252 100%);
+    }
+  }
+  .dr {
+    background: linear-gradient(90deg, #e67e22 60%, #c76b13 100%);
+    color: #fff;
+    &:hover {
+      background: linear-gradient(90deg, #c76b13 60%, #e67e22 100%);
+    }
+  }
+}
+
 // 미디어 쿼리
 @media (max-width: 768px) {
   .license-sections-container {
@@ -366,7 +462,7 @@ h2 {
   .license-page {
     font-size: 2vw;
     .table-wrapper {
-      max-height: 60vh;
+      max-height: 70vh;
     }
   }
 }
@@ -400,4 +496,12 @@ h2 {
   max-width: 80px;
   box-sizing: border-box;
   text-align: center;
+}
+
+// LicensePage.scss
+.license-sections-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // 3열
+  gap: 16px;
+  margin-top: 24px;
 }
